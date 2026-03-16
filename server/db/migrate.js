@@ -14,6 +14,6 @@ export const db = new sqlite.Database("../data.db", (err) => {
 db.serialize(() => {
   db.run(`
         ALTER TABLE users
-        ADD COLUMN harvest_token TEXT
+        ADD COLUMN harvest_ID TEXT
     `);
 });
