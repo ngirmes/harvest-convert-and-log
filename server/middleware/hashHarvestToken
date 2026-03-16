@@ -1,0 +1,13 @@
+import bcrypt from "bcrypt";
+
+export default async function hashHarvestToken(req, res, next) {
+  const { harvest_token } = req.body;
+  try {
+    const hashedToken = await bcrypt.hash(harvest_token, 10);
+    req.body.harvest_token = hashedToken;
+    next();
+  } catch (error) {
+    console.error("Error hashing harvest token", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+}
