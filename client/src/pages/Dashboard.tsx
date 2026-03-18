@@ -105,7 +105,14 @@ export default function Dashboard() {
 
     const data = await response.json();
     setProjects(data.projects);
+    console.log(data);
   }
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      getProjects();
+    }
+  }, [isAuthenticated, projects]);
 
   async function postProject() {
     const projectName = prompt("Enter project name:");

@@ -8,6 +8,7 @@ import validate from "../validation/validate.js";
 import {
   harvestCredentials,
   postProject,
+  getProjects,
   newTasks,
 } from "../controllers/apiControllers.js";
 
