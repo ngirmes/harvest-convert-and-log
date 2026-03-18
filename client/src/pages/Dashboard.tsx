@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { CornerRightDown } from "lucide-react";
+import { useNavigate } from "react-router";
 
 type Project = {
   name: string;
@@ -7,6 +8,8 @@ type Project = {
 };
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+  const [userID, setUserID] = useState(0);
   const [projects, setProjects] = useState([]);
   const [newProjectName, setNewProjectName] = useState("");
   const [task, setTask] = useState("");
@@ -59,6 +62,7 @@ export default function Dashboard() {
 
       const data = await response.json();
       localStorage.setItem("token", data.token);
+      setUserID(data.userId);
       setIsAuthenticated(true);
       reset();
       getProjects();
@@ -140,6 +144,9 @@ export default function Dashboard() {
         <header className="absolute top-0 left-0 w-full p-4 bg-orange-50 text-black/70 text-center font-bold border-2 border-black/70">
           Harvest Convert & Log
         </header>
+        <button onClick={() => navigate("/dev", { state: { userID } })}>
+          Go to Dev
+        </button>
         <div className="grid grid-cols-3 relative bg-orange-50 p-8 rounded-lg shadow-lg w-3/4 h-3/4 border-2 border-black/70">
           <div className="flex flex-col col-span-2">
             <label htmlFor="newProject">New Project</label>

@@ -43,7 +43,7 @@ export const login = async (req, res) => {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
 
-    res.json({ message: "Login successful", token });
+    res.json({ message: "Login successful", token, userId: row.id });
   } catch (error) {
     console.error("Error during login", error);
     return res.status(500).json({ error: "Internal server error" });
