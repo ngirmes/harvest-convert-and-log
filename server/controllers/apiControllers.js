@@ -14,7 +14,7 @@ export const harvestCredentials = (req, res) => {
   });
 };
 
-export const newProject = (req, res) => {
+export const postProject = (req, res) => {
   const { name } = req.body;
   const userId = req.user.userId;
   const sql = `INSERT INTO projects (name, user_id) VALUES (?, ?)`;
@@ -28,6 +28,24 @@ export const newProject = (req, res) => {
       message: "Project created successfully",
       projectId: this.lastID,
     });
+  });
+};
+
+export const getProjects = (req, res) => {
+  const userId = req.user.userId;
+  const sql = `SELECT id, name, tasks FROM projects WHERE user_id = ?`;
+
+  db.all(sql, [userId], (err, rows) => {
+    if (err) {
+      console.error("Error fetching projects", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+    const projects = rows.map((row) => ({
+      id: row.id,
+      name: row.name,
+      tasks: JSON.parse(row.tasks || "[]"),
+    }));
+    res.json({ projects });
   });
 };
 

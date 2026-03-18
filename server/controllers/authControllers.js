@@ -2,17 +2,22 @@ import { db } from "../db/db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-export const register = (req, res) => {
+export const register = async (req, res) => {
   const { email, password } = req.body;
   const sql = "INSERT INTO users (email, password) VALUES (?, ?)";
 
-  db.run(sql, [email, password], (err) => {
-    if (err) {
-      console.error("Error inserting user", err);
-      return res.status(500).json({ error: "Internal server error" });
-    }
+  try {
+    await new Promise((resolve, reject) => {
+      db.run(sql, [email, password], (err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
     res.status(201).json({ message: "User registered successfully" });
-  });
+  } catch (error) {
+    console.error("Error registering user", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 };
 
 export const login = async (req, res) => {
