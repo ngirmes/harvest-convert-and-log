@@ -20,4 +20,14 @@ db.serialize(() => {
             password TEXT NOT NULL
         )
     `);
+  db.run(`
+        CREATE TABLE IF NOT EXISTS projects 
+        (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            tasks TEXT,
+            user_id INTEGER NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        )
+    `);
 });

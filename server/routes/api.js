@@ -22,5 +22,7 @@ routerAPI.post(
   validate(projectSchema),
   newProject,
 );
+
+routerAPI.post("/tasks", authenticateToken, validate(tasksSchema), newTasks);
 // routerAPI.get("/harvest-me", authenticateToken, harvestMe);
 export default routerAPI;

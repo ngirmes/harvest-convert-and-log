@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config({ path: "./.env" });
+
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
@@ -18,15 +19,15 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 const authLimit = rateLimit({
-  windowMs: 15 * 60 * 100, // 15 seconds
+  windowMs: 60 * 60 * 1000, // 1 hour
   max: 10, // limit each IP to 10 requests per windowMs
-  message: "Too many requests from this IP, please try again after 15 minutes",
+  message: "Too many requests from this IP, please try again after an hour",
 });
 
 const apiLimit = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hour
+  windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
-  message: "Too many requests from this IP, please try again after an hour",
+  message: "Too many requests from this IP, please try again after 15 minutes",
 });
 
 app.get("/", (req, res) => {

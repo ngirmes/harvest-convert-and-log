@@ -14,7 +14,7 @@ export const harvestCredentials = (req, res) => {
   });
 };
 
-export const newProjevct = (req, res) => {
+export const newProject = (req, res) => {
   const { name } = req.body;
   const userId = req.user.userId;
   const sql = `INSERT INTO projects (name, user_id) VALUES (?, ?)`;
@@ -28,6 +28,19 @@ export const newProjevct = (req, res) => {
       message: "Project created successfully",
       projectId: this.lastID,
     });
+  });
+};
+
+export const newTasks = (req, res) => {
+  const { tasks, projectId } = req.body;
+  const sql = `UPDATE projects SET tasks = ? WHERE id = ?`;
+
+  db.run(sql, [JSON.stringify(tasks), projectId], function (err) {
+    if (err) {
+      console.error("Error adding tasks to project", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+    res.json({ message: "Tasks added to project successfully" });
   });
 };
 /*
