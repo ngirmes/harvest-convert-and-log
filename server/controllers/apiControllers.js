@@ -14,6 +14,22 @@ export const harvestCredentials = (req, res) => {
   });
 };
 
+export const newProjevct = (req, res) => {
+  const { name } = req.body;
+  const userId = req.user.userId;
+  const sql = `INSERT INTO projects (name, user_id) VALUES (?, ?)`;
+
+  db.run(sql, [name, userId], function (err) {
+    if (err) {
+      console.error("Error creating project", err);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+    res.json({
+      message: "Project created successfully",
+      projectId: this.lastID,
+    });
+  });
+};
 /*
 export const harvestMe = (req, res) => {
   const userId = req.user.userId;

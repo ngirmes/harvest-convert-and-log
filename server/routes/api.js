@@ -6,6 +6,7 @@ import hashHarvestCredentials from "../middleware/hashHarvestCredentials.js";
 import { harvestCredentials } from "../controllers/apiControllers.js";
 import validate from "../validation/validate.js";
 import { harvestCredentialsSchema } from "../validation/apiSchemas.js";
+import { projectSchema } from "../validation/apiSchemas.js";
 
 routerAPI.post(
   "/harvest-credentials",
@@ -15,5 +16,11 @@ routerAPI.post(
   harvestCredentials,
 );
 
+routerAPI.post(
+  "/project",
+  authenticateToken,
+  validate(projectSchema),
+  newProject,
+);
 // routerAPI.get("/harvest-me", authenticateToken, harvestMe);
 export default routerAPI;
