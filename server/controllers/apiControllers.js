@@ -24,9 +24,13 @@ export const postProject = (req, res) => {
       console.error("Error creating project", err);
       return res.status(500).json({ error: "Internal server error" });
     }
-    res.json({
+    res.status(201).json({
       message: "Project created successfully",
-      projectId: this.lastID,
+      project: {
+        id: this.lastID,
+        name,
+        tasks: [],
+      },
     });
   });
 };
