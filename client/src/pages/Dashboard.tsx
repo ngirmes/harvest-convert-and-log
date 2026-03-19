@@ -61,14 +61,17 @@ export default function Dashboard() {
       });
 
       const data = await response.json();
-      localStorage.setItem("token", data.token);
-      setUserID(data.userId);
-      setIsAuthenticated(true);
-      reset();
-      getProjects();
-      console.log(data);
+      if (response.ok) {
+        localStorage.setItem("token", data.token);
+        setUserID(data.userId);
+        reset();
+        setIsAuthenticated(true);
+        console.log(data);
+      } else {
+        console.log({ error: data.error });
+      }
     } catch (error) {
-      console.error("Login failed:", error);
+      console.log(error);
     }
   }
 
@@ -112,12 +115,6 @@ export default function Dashboard() {
     console.log(data);
   }
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      getProjects();
-    }
-  }, [isAuthenticated, projects]);
-
   async function postProject() {
     const projectName = prompt("Enter project name:");
     if (projectName) {
@@ -144,9 +141,6 @@ export default function Dashboard() {
         <header className="absolute top-0 left-0 w-full p-4 bg-orange-50 text-black/70 text-center font-bold border-2 border-black/70">
           Harvest Convert & Log
         </header>
-        <button onClick={() => navigate("/dev", { state: { userID } })}>
-          Go to Dev
-        </button>
         <div className="grid grid-cols-3 relative bg-orange-50 p-8 rounded-lg shadow-lg w-3/4 h-3/4 border-2 border-black/70">
           <div className="flex flex-col col-span-2">
             <label htmlFor="newProject">New Project</label>

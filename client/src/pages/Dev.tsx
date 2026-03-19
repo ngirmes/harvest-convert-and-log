@@ -1,17 +1,20 @@
+import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router";
 
-type LocationState = {
-  userID: number;
-};
-
 export default function Dev() {
+  const token = localStorage.getItem("token");
   const navigate = useNavigate();
-  const location = useLocation() as { state: LocationState };
-  const userID = Number(location.state?.userID);
 
-  if (userID !== 1) {
-    navigate("/dashboard");
-  }
+  useEffect(() => {
+    if (!token) {
+      navigate("/");
+    } else if (token) {
+      const payload = JSON.parse(atob(token.split(".")[1]));
+      if (payload.userId !== "1") {
+        navigate("/");
+      }
+    }
+  });
 
   async function dev() {
     const response = await fetch("http://localhost:3000/api/dev", {
@@ -24,6 +27,7 @@ export default function Dev() {
     const data = await response.json();
     console.log(data);
   }
+
   return (
     <>
       <p>hi</p>
