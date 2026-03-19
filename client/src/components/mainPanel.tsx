@@ -1,13 +1,21 @@
 import { CornerRightDown } from "lucide-react";
 import { useState, useEffect } from "react";
 
+type MainPanelProps = {
+  setIsAuthenticated: (value: boolean) => void;
+  setSessionExpired: (value: boolean) => void;
+};
+
 type Project = {
   id: number;
   name: string;
   tasks: string[];
 };
 
-export default function MainPanel() {
+export default function MainPanel({
+  setIsAuthenticated,
+  setSessionExpired,
+}: MainPanelProps) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [newProjectName, setNewProjectName] = useState("");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
@@ -15,18 +23,29 @@ export default function MainPanel() {
   const [loggingDescription, setLoggingDescription] = useState("");
 
   useEffect(() => {
-    (async () => {
-      const response = await fetch("http://localhost:3000/api/projects", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+    const token = localStorage.getItem("token");
+    if (token)
+      (async () => {
+        const response = await fetch("http://localhost:3000/api/projects", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
 
-      const data = await response.json();
-      setProjects(data.projects);
-      console.log(data);
-    })();
+        const data = await response.json();
+        if (response.ok) {
+          setProjects(data.projects);
+          console.log(data);
+        } else if (response.status === 401) {
+          localStorage.removeItem("token");
+          setSessionExpired(true);
+          setIsAuthenticated(false);
+          console.log(data);
+        } else {
+          console.log(data.error);
+        }
+      })();
   }, []);
 
   async function postProject() {
@@ -45,6 +64,10 @@ export default function MainPanel() {
     const data = await response.json();
     if (response.ok) {
       setProjects((prev) => [...prev, data.project]);
+      console.log(data);
+    } else if (response.status === 401) {
+      localStorage.removeItem("token");
+      setIsAuthenticated(false);
       console.log(data);
     } else {
       console.log({ error: data.error });

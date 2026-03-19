@@ -17,6 +17,7 @@ const PORT = process.env.PORT || 3000;
 
 import routerAuth from "./routes/authRoutes.js";
 import routerApi from "./routes/apiRoutes.js";
+import authenticateToken from "./middleware/authenticateToken.js";
 import validate from "./validation/validate.js";
 import { authSchema } from "./validation/authSchemas.js";
 
@@ -46,7 +47,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/auth", validate(authSchema), routerAuth);
-app.use("/api", routerApi);
+app.use("/api", authenticateToken, routerApi);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

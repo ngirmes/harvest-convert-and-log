@@ -1,15 +1,23 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
-export default function AuthPanel() {
+type AuthPanelProps = {
+  isAuthenticated: boolean;
+  setIsAuthenticated: (value: boolean) => void;
+  sessionExpired: boolean;
+  setSessionExpired: (value: boolean) => void;
+};
+
+export default function AuthPanel({
+  isAuthenticated,
+  setIsAuthenticated,
+  sessionExpired,
+  setSessionExpired,
+}: AuthPanelProps) {
   const [authModal, setAuthModal] = useState(false);
   const authModalRef = useRef<HTMLDivElement>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [userID, setUserID] = useState(0);
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    const token = localStorage.getItem("token");
-    return !!token;
-  });
   const [loginOrRegister, setLoginOrRegister] = useState<"Login" | "Register">(
     "Login",
   );
@@ -34,6 +42,7 @@ export default function AuthPanel() {
     setEmail("");
     setPassword("");
   }
+
   async function login() {
     try {
       const response = await fetch("http://localhost:3000/auth/login", {
@@ -52,6 +61,7 @@ export default function AuthPanel() {
         localStorage.setItem("token", data.token);
         setUserID(data.userId);
         reset();
+        setSessionExpired(false);
         setIsAuthenticated(true);
         console.log(data);
       } else {
@@ -92,6 +102,11 @@ export default function AuthPanel() {
     return (
       <div className="col-span-1 flex h-full flex-col justify-end items-end gap-3">
         <div className="relative">
+          {sessionExpired && (
+            <div className="bg-red-200 text-red-800 p-3 rounded">
+              Your session has expired. Please log in again.
+            </div>
+          )}
           {authModal && (
             <div
               ref={authModalRef}
