@@ -1,7 +1,8 @@
 import { CornerRightDown } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition } from "react";
 
 type MainPanelProps = {
+  isAuthenticated: boolean;
   setIsAuthenticated: (value: boolean) => void;
   setSessionExpired: (value: boolean) => void;
 };
@@ -13,18 +14,29 @@ type Project = {
 };
 
 export default function MainPanel({
+  isAuthenticated,
   setIsAuthenticated,
   setSessionExpired,
 }: MainPanelProps) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [newProjectName, setNewProjectName] = useState("");
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-  const [newTask, setNewTask] = useState("");
+  const [newTasks, setNewTasks] = useState([]);
   const [loggingDescription, setLoggingDescription] = useState("");
+  const [, startTransition] = useTransition();
+  const [matcherButton, setMatcherButton] = useState<true | false>(false);
+  const [tasksButton, setTasksButton] = useState<true | false>(false);
+
+  function reset() {
+    setProjects([]);
+    setNewProjectName("");
+    setSelectedProject(null);
+    setLoggingDescription("");
+  }
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (token)
+    if (token) {
       (async () => {
         const response = await fetch("http://localhost:3000/api/projects", {
           method: "GET",
@@ -46,7 +58,12 @@ export default function MainPanel({
           console.log(data.error);
         }
       })();
-  }, []);
+    } else {
+      startTransition(() => {
+        reset();
+      });
+    }
+  }, [isAuthenticated]);
 
   async function postProject() {
     const response = await fetch("http://localhost:3000/api/project", {
@@ -64,6 +81,7 @@ export default function MainPanel({
     const data = await response.json();
     if (response.ok) {
       setProjects((prev) => [...prev, data.project]);
+
       console.log(data);
     } else if (response.status === 401) {
       localStorage.removeItem("token");
@@ -72,6 +90,33 @@ export default function MainPanel({
     } else {
       console.log({ error: data.error });
     }
+  }
+
+  async function patchTasks() {
+    const response = await fetch(
+      `http://localhost:3000/api/addTasks/:${selectedProject?.id}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(newTasks),
+      },
+    );
+
+    const data = await response.json();
+    if (response.ok) {
+      console.log("Tasks successfully added");
+      const proj = projects.find((p) => p.id === selectedProject?.id);
+      proj.tasks = data.tasks;
+    } else {
+      console.log({ error: data.error });
+    }
+  }
+
+  function runMatcher() {
+    console.log("matcher");
   }
 
   return (
@@ -113,7 +158,26 @@ export default function MainPanel({
         htmlFor="taskdescription"
         className="inline-flex text-lg font-medium text-gray-700 mt-4"
       >
-        Logging Description
+        <button
+          onClick={() => {
+            setMatcherButton(true);
+            setTasksButton(false);
+          }}
+          className="hover:border-2 hover:border-black hover:rounded-lg p-2"
+        >
+          Run Matcher{" "}
+        </button>{" "}
+        or
+        <button
+          onClick={() => {
+            setMatcherButton(false);
+            setTasksButton(true);
+          }}
+          className="hover:border-2 hover:border-black hover:rounded-lg p-2"
+        >
+          {" "}
+          Add Tasks to '{selectedProject?.name}'
+        </button>
         <CornerRightDown size={16} className="mt-2" />
       </label>
       <textarea
@@ -123,6 +187,20 @@ export default function MainPanel({
         onChange={(e) => setLoggingDescription(e.target.value)}
         className="rounded-lg border-2 border-black/70"
       />
+      <button
+        disabled={!matcherButton}
+        onClick={() => runMatcher()}
+        className="rounded-lg border-2 border-black/70 bg-orange-300 px-6 py-3 text-lg font-bold text-black/70 hover:bg-orange-400 w-72 mt-4 disabled:text-gray-400 disabled:border-gray-400 disabled:bg-orange-50"
+      >
+        Run Matcher
+      </button>
+      <button
+        disabled={!tasksButton}
+        onClick={() => patchTasks()}
+        className="rounded-lg border-2 border-black/70 bg-orange-300 px-6 py-3 text-lg font-bold text-black/70 hover:bg-orange-400 w-72 mt-4 disabled:text-gray-400 disabled:border-gray-400 disabled:bg-orange-50"
+      >
+        Add Tasks
+      </button>
     </div>
   );
 }

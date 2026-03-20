@@ -8,7 +8,7 @@ import {
   harvestCredentials,
   postProject,
   getProjects,
-  newTasks,
+  patchTasks,
 } from "../controllers/apiControllers.js";
 
 import {
@@ -18,17 +18,14 @@ import {
 } from "../validation/apiSchemas.js";
 
 // routerAPI.get("/harvest-credentials", authenticateToken, getHarvestCredentials);
-
 routerAPI.post(
   "/harvest-credentials",
   validate(harvestCredentialsSchema),
   hashHarvestCredentials,
   harvestCredentials,
 );
-
 routerAPI.post("/project", validate(projectSchema), postProject);
-
-routerAPI.post("/tasks", validate(tasksSchema), newTasks);
 routerAPI.get("/projects", getProjects);
+routerAPI.patch("/projects", validate(tasksSchema), patchTasks);
 // routerAPI.get("/harvest-me", authenticateToken, harvestMe);
 export default routerAPI;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 
 type AuthPanelProps = {
   isAuthenticated: boolean;
@@ -21,6 +21,8 @@ export default function AuthPanel({
   const [loginOrRegister, setLoginOrRegister] = useState<"Login" | "Register">(
     "Login",
   );
+  // const [timer, setTimer] = useState(15 * 60 * 1000);
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -37,6 +39,13 @@ export default function AuthPanel({
       document.removeEventListener("click", handleClickOutside);
     };
   }, []);
+
+  /*
+  useEffect(() => {
+    const interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
+
+    clearInterval(interval);
+  }, [timer]); */
 
   function reset() {
     setEmail("");
@@ -98,15 +107,16 @@ export default function AuthPanel({
     setIsAuthenticated(false);
     reset();
   }
+
   if (!isAuthenticated) {
     return (
       <div className="col-span-1 flex h-full flex-col justify-end items-end gap-3">
+        {sessionExpired && (
+          <div className="bg-red-200 text-red-800 p-3 rounded w-72 text-center">
+            Your session has expired. <br /> Please log in.
+          </div>
+        )}
         <div className="relative">
-          {sessionExpired && (
-            <div className="bg-red-200 text-red-800 p-3 rounded">
-              Your session has expired. Please log in again.
-            </div>
-          )}
           {authModal && (
             <div
               ref={authModalRef}
@@ -119,7 +129,7 @@ export default function AuthPanel({
                 className="w-full mb-4 px-3 py-2 border rounded-lg border-black/70"
               />
               <input
-                type="text"
+                type="password"
                 placeholder="Password"
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full mb-4 px-3 py-2 border rounded-lg border-black/70"

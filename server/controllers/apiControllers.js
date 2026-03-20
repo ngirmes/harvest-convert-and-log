@@ -44,17 +44,20 @@ export const getProjects = (req, res) => {
       console.error("Error fetching projects", err);
       return res.status(500).json({ error: "Internal server error" });
     }
+    console.log(rows);
     const projects = rows.map((row) => ({
       id: row.id,
       name: row.name,
       tasks: JSON.parse(row.tasks || "[]"),
     }));
+    console.log(projects);
     res.json({ projects });
   });
 };
 
-export const newTasks = (req, res) => {
-  const { tasks, projectId } = req.body;
+export const patchTasks = (req, res) => {
+  const projectId = req.params;
+  const tasks = req.body;
   const sql = `UPDATE projects SET tasks = ? WHERE id = ?`;
 
   db.run(sql, [JSON.stringify(tasks), projectId], function (err) {
