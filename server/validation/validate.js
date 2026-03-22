@@ -1,5 +1,4 @@
 export default function validate(schema, source = "body") {
-  console.log("validating");
   return (req, res, next) => {
     const result = schema.safeParse(req[source]);
 

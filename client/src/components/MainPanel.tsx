@@ -1,5 +1,5 @@
 import { CornerRightDown } from "lucide-react";
-import { useState, useEffect, useTransition } from "react";
+import { useState, useEffect, useTransition, use } from "react";
 
 type MainPanelProps = {
   isAuthenticated: boolean;
@@ -31,6 +31,7 @@ export default function MainPanel({
   const [tasksButton, setTasksButton] = useState<true | false>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [showTasks, setShowTasks] = useState<boolean>(false);
+  const [bestTask, setBestTask] = useState<string>("");
 
   function reset() {
     setProjects([]);
@@ -144,8 +145,30 @@ export default function MainPanel({
     }
   }
 
-  function runMatcher() {
-    console.log("matcher");
+  async function runMatcher() {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch("http://localhost:3000/api/embed", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        description: textboxInput,
+        tasks: selectedProject.tasks,
+      }),
+    });
+
+    const data = await response.json();
+    if (response.status === 401) {
+      localStorage.removeItem("token");
+      setIsAuthenticated(false);
+      setSessionExpired(true);
+    } else {
+      setBestTask(data.bestTask);
+      console.log(data);
+    }
   }
 
   return (

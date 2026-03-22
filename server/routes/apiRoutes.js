@@ -10,6 +10,7 @@ import {
   postProject,
   getProjects,
   patchTasks,
+  embed,
 } from "../controllers/apiControllers.js";
 
 import {
@@ -27,6 +28,7 @@ routerAPI.post(
 );
 routerAPI.post("/project", validate(projectSchema), postProject);
 routerAPI.get("/projects", getProjects);
-routerAPI.patch("/projects/:id", dev, patchTasks);
+routerAPI.patch("/projects/:id", patchTasks);
+routerAPI.post("/embed", embed);
 // routerAPI.get("/harvest-me", authenticateToken, harvestMe);
 export default routerAPI;

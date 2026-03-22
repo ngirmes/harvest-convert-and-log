@@ -1,4 +1,5 @@
 import { db } from "../db/db.js";
+import OpenAI from "openai";
 
 export const harvestCredentials = (req, res) => {
   const { harvest_token, harvest_ID } = req.body;
@@ -66,6 +67,51 @@ export const patchTasks = (req, res) => {
     }
     res.json({ message: "Tasks added to project successfully" });
   });
+};
+
+function cosineSimilarity(a, b) {
+  let dot = 0;
+  let magA = 0;
+  let magB = 0;
+
+  for (let i = 0; i < a.length; i++) {
+    dot += a[i] * b[i];
+    magA += a[i] * a[i];
+    magB += b[i] * b[i];
+  }
+
+  magA = Math.sqrt(magA);
+  magB = Math.sqrt(magB);
+
+  return dot / (magA * magB);
+}
+
+export const embed = async (req, res) => {
+  const { description, tasks } = req.body;
+  const client = new OpenAI();
+  const data = [description, ...tasks];
+
+  const embedding = await client.embeddings.create({
+    model: "text-embedding-3-small",
+    input: data,
+    encoding_format: "float",
+  });
+  let bestScore = -Infinity;
+  let bestTask = null;
+
+  const descriptionVector = embedding.data[0].embedding;
+
+  for (let i = 1; i < embedding.data.length; i++) {
+    const taskVector = embedding.data[i].embedding;
+    const score = cosineSimilarity(descriptionVector, taskVector);
+
+    if (score > bestScore) {
+      bestScore = score;
+      bestTask = tasks[i - 1];
+    }
+  }
+
+  res.json({ bestTask, confidence: bestScore });
 };
 /*
 export const harvestMe = (req, res) => {

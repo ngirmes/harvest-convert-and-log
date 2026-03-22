@@ -15,3 +15,9 @@
 - fix 'session expired' message -> fixed (variable dependency (sessioneEXPIRED) logic was backwards)
   -> had to create new .env, and JWT_SECRET
 - projects should be fetched upon login -> added isAuthenticated as a prop and added to dependency array, now when users log in projects are fetched immediately
+
+3/21
+-tasksSchema is causing issues
+-i think i need to clear new tasks
+
+- reintroduce task zod validation
