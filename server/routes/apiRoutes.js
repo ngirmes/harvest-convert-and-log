@@ -3,7 +3,6 @@ const routerAPI = express.Router();
 
 import hashHarvestCredentials from "../middleware/hashHarvestCredentials.js";
 import validate from "../validation/validate.js";
-import dev from "../middleware/dev.js";
 
 import {
   harvestCredentials,

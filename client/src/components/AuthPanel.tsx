@@ -43,7 +43,7 @@ export default function AuthPanel({
     async function checkAuth() {
       const token = localStorage.getItem("token");
       if (token) {
-        const response = await fetch("http://localhost:3000/auth/me", {
+        const response = await fetch("/auth/me", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -58,13 +58,6 @@ export default function AuthPanel({
     checkAuth();
   }, []);
 
-  /*
-  useEffect(() => {
-    const interval = setInterval(() => setTimer((prev) => prev - 1), 1000);
-
-    clearInterval(interval);
-  }, [timer]); */
-
   function reset() {
     setEmail("");
     setPassword("");
@@ -72,7 +65,7 @@ export default function AuthPanel({
 
   async function login() {
     try {
-      const response = await fetch("http://localhost:3000/auth/login", {
+      const response = await fetch("/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -100,7 +93,7 @@ export default function AuthPanel({
 
   async function register() {
     try {
-      const response = await fetch("http://localhost:3000/auth/register", {
+      const response = await fetch("/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

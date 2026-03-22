@@ -44,7 +44,7 @@ export default function MainPanel({
     const token = localStorage.getItem("token");
     if (token) {
       (async () => {
-        const response = await fetch("http://localhost:3000/api/projects", {
+        const response = await fetch("/api/projects", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -72,7 +72,7 @@ export default function MainPanel({
   }, [isAuthenticated]);
 
   async function postProject() {
-    const response = await fetch("http://localhost:3000/api/project", {
+    const response = await fetch("/api/project", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -115,17 +115,14 @@ export default function MainPanel({
     const updatedTasks = [...selectedProject.tasks, ...uniqueNewTasks];
     console.log(`updated tasks: ${updatedTasks}`);
 
-    const response = await fetch(
-      `http://localhost:3000/api/projects/${selectedProject.id}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ tasks: updatedTasks }),
+    const response = await fetch(`/api/projects/${selectedProject.id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-    );
+      body: JSON.stringify({ tasks: updatedTasks }),
+    });
 
     const data = await response.json();
     if (response.status === 401) {
@@ -148,7 +145,7 @@ export default function MainPanel({
   async function runMatcher() {
     const token = localStorage.getItem("token");
 
-    const response = await fetch("http://localhost:3000/api/embed", {
+    const response = await fetch("/api/embed", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
