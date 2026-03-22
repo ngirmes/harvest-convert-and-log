@@ -17,7 +17,6 @@ export default function AuthPanel({
   const authModalRef = useRef<HTMLDivElement>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [userID, setUserID] = useState(0);
   const [loginOrRegister, setLoginOrRegister] = useState<"Login" | "Register">(
     "Login",
   );
@@ -87,7 +86,6 @@ export default function AuthPanel({
       const data = await response.json();
       if (response.ok) {
         localStorage.setItem("token", data.token);
-        setUserID(data.userId);
         reset();
         setSessionExpired(false);
         setIsAuthenticated(true);
