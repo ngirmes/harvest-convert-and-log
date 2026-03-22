@@ -40,6 +40,25 @@ export default function AuthPanel({
     };
   }, []);
 
+  useEffect(() => {
+    async function checkAuth() {
+      const token = localStorage.getItem("token");
+      if (token) {
+        const response = await fetch("http://localhost:3000/auth/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        console.log(data);
+        if (data.message === "Valid token") {
+          return setIsAuthenticated(true);
+        }
+      }
+    }
+    checkAuth();
+  }, []);
+
   /*
   useEffect(() => {
     const interval = setInterval(() => setTimer((prev) => prev - 1), 1000);

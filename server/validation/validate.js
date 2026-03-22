@@ -1,9 +1,6 @@
 export default function validate(schema, source = "body") {
+  console.log("validating");
   return (req, res, next) => {
-    /*
-    if (req.body.email === "dev") {
-      return next();
-    }*/
     const result = schema.safeParse(req[source]);
 
     if (!result.success) {

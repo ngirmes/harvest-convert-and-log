@@ -11,3 +11,7 @@ export const register = () => {};`
   - ex: installing production dependencies: npm install "production"
 - Concurrent Scripts
   - Using concurrently allows both frontend and backend to run with a single command.
+
+  -while trying to figure out updating tasks, I ran into an issue where I was trying to filter so only NEW tasks
+  would be added, and while MOST of the logic was right, a syntax issue was causing a comparison of a TRIMMED
+  version of the tasks vs. an UNTRIMMED, so it was never correctly filtering out

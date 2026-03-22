@@ -39,3 +39,7 @@ export const login = async (req, res) => {
     }
   });
 };
+
+export function getMe() {
+  return { message: "Valid Token" };
+}

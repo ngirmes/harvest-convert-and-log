@@ -3,6 +3,7 @@ const routerAPI = express.Router();
 
 import hashHarvestCredentials from "../middleware/hashHarvestCredentials.js";
 import validate from "../validation/validate.js";
+import dev from "../middleware/dev.js";
 
 import {
   harvestCredentials,
@@ -26,6 +27,6 @@ routerAPI.post(
 );
 routerAPI.post("/project", validate(projectSchema), postProject);
 routerAPI.get("/projects", getProjects);
-routerAPI.patch("/projects", validate(tasksSchema), patchTasks);
+routerAPI.patch("/projects/:id", dev, patchTasks);
 // routerAPI.get("/harvest-me", authenticateToken, harvestMe);
 export default routerAPI;

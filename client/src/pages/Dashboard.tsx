@@ -1,12 +1,12 @@
 import { useState } from "react";
 
-import AuthPanel from "../components/authPanel";
-import MainPanel from "../components/mainPanel";
-import Header from "../components/header";
+import AuthPanel from "../components/AuthPanel";
+import MainPanel from "../components/MainPanel";
+import Header from "../components/Header";
 
 export default function Dashboard() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [sessionExpired, setSessionExpired] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState<true | false>(false);
+  const [sessionExpired, setSessionExpired] = useState<true | false>(true);
 
   return (
     <>
