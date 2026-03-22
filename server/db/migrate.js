@@ -13,7 +13,6 @@ export const db = new sqlite.Database("../data.db", (err) => {
 // use serialize() to ensure DB commands run in sequence, preventing race conditions during table creation
 db.serialize(() => {
   db.run(`
-        UPDATE users
-        SET email = "dev" WHERE id = 1
+        UPDATE projects SET tasks = NULL
     `);
 });
