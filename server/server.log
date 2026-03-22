@@ -3369,3 +3369,4 @@
 ::1 - - [22/Mar/2026:02:38:51 +0000] "POST /api/embed HTTP/1.1" 500 381 "http://127.0.0.1:5173/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0"
 ::1 - - [22/Mar/2026:02:39:21 +0000] "POST /api/embed HTTP/1.1" 200 59 "http://127.0.0.1:5173/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0"
 ::1 - - [22/Mar/2026:02:39:41 +0000] "POST /api/embed HTTP/1.1" 200 66 "http://127.0.0.1:5173/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0"
+::1 - - [22/Mar/2026:04:22:58 +0000] "GET /auth/me HTTP/1.1" - - "http://127.0.0.1:5173/" "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0"

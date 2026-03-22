@@ -29,4 +29,3 @@ coverage/
 
 bash.txt
 client/src/Dev/
-server/middleware/dev.js

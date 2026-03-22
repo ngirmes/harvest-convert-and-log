@@ -21,3 +21,6 @@
 -i think i need to clear new tasks
 
 - reintroduce task zod validation
+
+-more interactive and better and friendlier UI such as
+-login buttin didnt actually login
