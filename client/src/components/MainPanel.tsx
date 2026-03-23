@@ -1,10 +1,12 @@
 import { CornerRightDown } from "lucide-react";
 import { useState, useEffect, useTransition } from "react";
+import type { ApiFunction } from "../pages/Dashboard";
 
 type MainPanelProps = {
   isAuthenticated: boolean;
   setIsAuthenticated: (value: boolean) => void;
   setSessionExpired: (value: boolean) => void;
+  api: ApiFunction;
 };
 
 type Project = {
@@ -17,6 +19,7 @@ export default function MainPanel({
   isAuthenticated,
   setIsAuthenticated,
   setSessionExpired,
+  api,
 }: MainPanelProps) {
   const [projects, setProjects] = useState<Project[]>([]);
   const [newProjectName, setNewProjectName] = useState<string>("");

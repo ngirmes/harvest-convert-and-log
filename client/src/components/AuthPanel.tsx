@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef } from "react";
+import { CircleCheck } from "lucide-react";
+import type { ApiFunction } from "../pages/Dashboard";
 
 type AuthPanelProps = {
   isAuthenticated: boolean;
   setIsAuthenticated: (value: boolean) => void;
   sessionExpired: boolean;
   setSessionExpired: (value: boolean) => void;
+  api: ApiFunction;
 };
 
 export default function AuthPanel({
@@ -12,6 +15,7 @@ export default function AuthPanel({
   setIsAuthenticated,
   sessionExpired,
   setSessionExpired,
+  api,
 }: AuthPanelProps) {
   const [authModal, setAuthModal] = useState(false);
   const authModalRef = useRef<HTMLDivElement>(null);
@@ -20,6 +24,7 @@ export default function AuthPanel({
   const [loginOrRegister, setLoginOrRegister] = useState<"Login" | "Register">(
     "Login",
   );
+  const [regMessage, setRegMessage] = useState<string | null>(null);
   // const [timer, setTimer] = useState(15 * 60 * 1000);
 
   useEffect(() => {
@@ -65,27 +70,25 @@ export default function AuthPanel({
 
   async function login() {
     try {
-      const response = await fetch("/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await api<{ message: string; token: string }>(
+        "/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
         },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+      );
 
-      const data = await response.json();
-      if (response.ok) {
-        localStorage.setItem("token", data.token);
-        reset();
-        setSessionExpired(false);
-        setIsAuthenticated(true);
-        console.log(data);
-      } else {
-        console.log({ error: data.error });
-      }
+      console.log(response.message);
+      localStorage.setItem("token", response.token);
+      reset();
+      setSessionExpired(false);
+      setIsAuthenticated(true);
     } catch (error) {
       console.log(error);
     }
@@ -93,7 +96,7 @@ export default function AuthPanel({
 
   async function register() {
     try {
-      const response = await fetch("/auth/register", {
+      const response = await api<{ message: string }>("/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -104,11 +107,16 @@ export default function AuthPanel({
         }),
       });
 
-      const data = await response.json();
-      console.log(data);
+      console.log(response.message);
+
+      setRegMessage("Registration Successful");
+      setTimeout(() => {
+        setRegMessage(null);
+      }, 3000);
       reset();
     } catch (error) {
       console.error("Registration failed:", error);
+      setRegMessage("Registration failed. Please try again.");
     }
   }
 
@@ -156,6 +164,15 @@ export default function AuthPanel({
               >
                 {loginOrRegister}
               </button>
+              <div className="italic text-green-600 text-sm">
+                {regMessage && (
+                  <p className="text-sm p-2 flex">
+                    <CircleCheck className="text-green-600" />
+                    Registration Successful <br></br>
+                    Please log in
+                  </p>
+                )}
+              </div>
             </div>
           )}
 
