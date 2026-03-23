@@ -107,12 +107,10 @@ export default function AuthPanel({
         }),
       });
 
-      console.log(response.message);
-
-      setRegMessage("Registration Successful");
+      setRegMessage(response.message);
       setTimeout(() => {
         setRegMessage(null);
-      }, 3000);
+      }, 2000);
       reset();
     } catch (error) {
       console.error("Registration failed:", error);
@@ -131,7 +129,7 @@ export default function AuthPanel({
       <div className="col-span-1 flex h-full flex-col justify-end items-end gap-3">
         {sessionExpired && (
           <div className="bg-red-200 text-red-800 p-3 rounded w-72 text-center">
-            Your session has expired. <br /> Please log in.
+            Please log in.
           </div>
         )}
         <div className="relative">

@@ -12,7 +12,7 @@ async function api<T>(url: string, options?: RequestInit): Promise<T> {
   } else return data;
 }
 
-export type ApiFunction = typeof api;
+export type ApiFunction = <T>(url: string, options?: RequestInit) => Promise<T>;
 
 export default function Dashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState<true | false>(false);

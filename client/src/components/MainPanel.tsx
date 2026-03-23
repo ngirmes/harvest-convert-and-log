@@ -1,6 +1,7 @@
 import { CornerRightDown } from "lucide-react";
 import { useState, useEffect, useTransition } from "react";
 import type { ApiFunction } from "../pages/Dashboard";
+import { MoveRight } from "lucide-react";
 
 type MainPanelProps = {
   isAuthenticated: boolean;
@@ -217,6 +218,7 @@ export default function MainPanel({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <h1 className="text-xl">Tasks for {selectedProject.name}</h1>
+            <div className="mx-2 grow border-t border-black/40"></div>
             <button
               onClick={() => setShowTasks(!showTasks)}
               className="rounded-lg border-2 border-black/70 bg-orange-300 px-4 py-2 text-sm font-bold text-black/70 hover:bg-orange-400"
@@ -247,6 +249,7 @@ export default function MainPanel({
       {selectedProject.id !== 0 && (
         <div className="space-y-4">
           <div className="flex items-center space-x-4">
+            <h2>Select One</h2> <MoveRight size={16} />
             <button
               onClick={() => {
                 setMatcherButton(true);
@@ -258,7 +261,7 @@ export default function MainPanel({
                   : "border-gray-300 hover:border-black"
               }`}
             >
-              Run Matcher
+              Add task description
             </button>
             <span className="text-gray-500">or</span>
             <button
