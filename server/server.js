@@ -1,22 +1,22 @@
 import dotenv from "dotenv";
-dotenv.config({ path: "./.env" });
+import path from "path";
+import { fileURLToPath } from "url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.join(__dirname, ".env") });
 
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 import fs from "fs";
-import { fileURLToPath } from "url";
-import path from "path";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 import routerAuth from "./routes/authRoutes.js";
 import routerApi from "./routes/apiRoutes.js";
+import routerHarvest from "./routes/harvestRoutes.js";
 import authenticateToken from "./middleware/authenticateToken.js";
 
 app.use(cors());
@@ -46,6 +46,7 @@ app.get("/", (req, res) => {
 
 app.use("/auth", routerAuth);
 app.use("/api", authenticateToken, routerApi);
+app.use("/harvest", authenticateToken, routerHarvest);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

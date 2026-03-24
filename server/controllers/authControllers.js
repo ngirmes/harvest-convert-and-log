@@ -2,7 +2,7 @@ import { db } from "../db/db.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-export const register = async (req, res) => {
+export const register = (req, res) => {
   const { email, password } = req.body;
   const sql = "INSERT INTO users (email, password) VALUES (?, ?)";
   db.run(sql, [email, password], (err) => {

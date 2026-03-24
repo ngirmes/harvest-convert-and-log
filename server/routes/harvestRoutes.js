@@ -1,16 +1,17 @@
 import express from "express";
 const routerHarvest = express.Router();
 
-import validate from "../validation/validate";
+import validate from "../validation/validate.js";
 import encryptHarvestCredentials from "../middleware/encryptHarvestCredentials.js";
+import authenticateToken from "../middleware/authenticateToken.js";
 
-import {} from "../controllers/harvestControllers.js";
+import { postHarvestCredentials } from "../controllers/harvestControllers.js";
 
 import { harvestSchema } from "../validation/harvestSchemas.js";
 
-routerHarvest.get("/harvest");
 routerHarvest.post(
-  "/harvest",
+  "/",
+  authenticateToken,
   validate(harvestSchema),
   encryptHarvestCredentials,
   postHarvestCredentials,
