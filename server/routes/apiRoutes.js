@@ -1,7 +1,6 @@
 import express from "express";
 const routerAPI = express.Router();
 
-import hashHarvestCredentials from "../middleware/hashHarvestCredentials.js";
 import validate from "../validation/validate.js";
 
 import {
