@@ -26,13 +26,11 @@ function encrypt(data) {
 }
 
 export default function encryptHarvestCredentials(req, res, next) {
-  console.log("encrypt middleware triggered:", req.method, req.path);
-  const { harvest_token, harvest_ID } = req.body;
-  if (!harvest_token || !harvest_ID) {
+  const { harvest_token } = req.body;
+  if (!harvest_token) {
     return res.status(400).json({ error: "Missing credentials" });
   }
 
   req.harvest_token = encrypt(harvest_token);
-  req.harvest_ID = encrypt(harvest_ID);
   next();
 }

@@ -28,12 +28,12 @@ export const login = async (req, res) => {
       if (!match) {
         return res.status(401).json({ error: "Invalid credentials" });
       }
-      const token = jwt.sign({ userId: row.id }, process.env.JWT_SECRET, {
+      const token = jwt.sign({ userID: row.id }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRES_IN,
       });
       res
         .status(200)
-        .json({ message: "Login successful", token, userId: row.id });
+        .json({ message: "Login successful", token, userID: row.id });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
