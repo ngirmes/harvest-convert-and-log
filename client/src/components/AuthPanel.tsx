@@ -202,17 +202,18 @@ export default function AuthPanel({
   }
 
   return (
-    <div className="justify-end col-span-1 flex h-full flex-col gap-3">
-      <div className="w-full max-h-100 overflow-y-auto">
+    <div className="col-span-1 flex h-full flex-col gap-3">
+      <div className="w-full overflow-y-auto flex-1">
         <Instructions />
       </div>
-
-      <button
-        onClick={() => logout()}
-        className="rounded-lg border-2 border-black/70 bg-orange-50 px-6 py-3 text-lg font-bold text-black/70 hover:bg-orange-300 w-72"
-      >
-        Logout
-      </button>
+      <div>
+        <button
+          onClick={() => logout()}
+          className="rounded-lg border-2 border-black/70 bg-orange-50 px-6 py-3 text-lg font-bold text-black/70 hover:bg-orange-300 w-72"
+        >
+          Logout
+        </button>
+      </div>
     </div>
   );
 }

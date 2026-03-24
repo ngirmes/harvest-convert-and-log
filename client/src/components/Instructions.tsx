@@ -1,10 +1,20 @@
 export default function Instructions() {
   return (
-    <>
-      <h2>Quick Guide: Using the Time Logger</h2>
+    <div className="text-sm">
+      <h3 className="bold"></h3>
+      <p className="italic text-xsm">
+        Important Note: The matcher uses{" "}
+        <strong>context-based semantic similarity</strong>, not simple keyword
+        matching. Because of this, the suggested task may occasionally differ
+        from what you personally expect. Always review the result and adjust it
+        if necessary.
+      </p>
+      <br />
+      <h2 className="">Quick Guide: Using the Time Logger</h2>
 
+      <br />
       <h3>1. Create a Project</h3>
-      <ul>
+      <ul className="list-disc list-inside pl-5">
         <li>
           Click <strong>Create Project</strong>.
         </li>
@@ -13,9 +23,9 @@ export default function Instructions() {
           (suggested to use same name as in Harvest).
         </li>
       </ul>
-
+      <br />
       <h3>2. Add Tasks to the Project</h3>
-      <ul>
+      <ul className="list-disc list-inside pl-5">
         <li>
           Add the tasks associated with that project (for example:{" "}
           <em>1: Research</em>, <em>2: Documentation</em>,{" "}
@@ -26,9 +36,9 @@ export default function Instructions() {
           match your work against.
         </li>
       </ul>
-
+      <br />
       <h3>3. Enter Your Work Description</h3>
-      <ul>
+      <ul className="list-disc list-inside pl-5">
         <li>
           When you perform work, write a short description of what you did in
           the <strong>work description field</strong>.
@@ -42,13 +52,13 @@ export default function Instructions() {
       <p>
         <strong>Examples:</strong>
       </p>
-      <ul>
+      <ul className="list-disc list-inside pl-5">
         <li>“Updated database schema and wrote migration script”</li>
         <li>“Met with client to review design changes”</li>
       </ul>
-
+      <br />
       <h3>4. Run the Matcher</h3>
-      <ul>
+      <ul className="list-disc list-inside pl-5">
         <li>
           Click <strong>Run Matcher</strong>.
         </li>
@@ -61,9 +71,9 @@ export default function Instructions() {
           description.
         </li>
       </ul>
-
+      <br />
       <h3>5. Review the Suggested Match</h3>
-      <ul>
+      <ul className="list-disc list-inside pl-5">
         <li>Check the suggested task.</li>
         <li>If the match looks correct, proceed as normal.</li>
         <li>
@@ -71,14 +81,6 @@ export default function Instructions() {
           work.
         </li>
       </ul>
-
-      <h3>Important Note</h3>
-      <p>
-        The matcher uses <strong>context-based semantic similarity</strong>, not
-        simple keyword matching. Because of this, the suggested task may
-        occasionally differ from what you personally expect. Always review the
-        result and adjust it if necessary.
-      </p>
-    </>
+    </div>
   );
 }

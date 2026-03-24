@@ -261,7 +261,7 @@ export default function MainPanel({
                   : "border-gray-300 hover:border-black"
               }`}
             >
-              Add task description
+              Add work description
             </button>
             <span className="text-gray-500">or</span>
             <button
