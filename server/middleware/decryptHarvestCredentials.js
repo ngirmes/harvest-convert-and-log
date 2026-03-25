@@ -3,18 +3,9 @@ import { db } from "../db/db.js";
 
 const algorithm = "aes-256-gcm";
 
-function decrypt(encryptedRecord) {
-  if (!encryptedRecord) {
+function decrypt(encrypted) {
+  if (!encrypted) {
     throw new Error("No encrypted payload provided");
-  }
-
-  let encrypted = encryptedRecord;
-  if (typeof encryptedRecord === "string") {
-    try {
-      encrypted = JSON.parse(encryptedRecord);
-    } catch (parseErr) {
-      throw new Error("Invalid encrypted payload format");
-    }
   }
 
   const { iv, tag, content } = encrypted;
@@ -49,7 +40,7 @@ export default function decryptHarvestCredentials(req, res, next) {
 
     if (!row) return res.status(400).json({ error: "User not found" });
 
-    const storedToken = row.harvest_token;
+    const storedToken = JSON.parse(row.harvest_token);
     const storedId = row.harvest_id || row.harvest_ID;
     const storedEmail = row.harvest_email;
 
@@ -57,28 +48,9 @@ export default function decryptHarvestCredentials(req, res, next) {
       console.warn("decryptHarvestCredentials missing fields", { userID, row });
       return res.status(400).json({ error: "Necessary credentials not found" });
     }
-
-    let harvest_token;
-    try {
-      harvest_token = decrypt(storedToken);
-    } catch (decryptErr) {
-      // support already-plaintext token in case field is not a JSON credential object
-      if (
-        storedToken &&
-        typeof storedToken === "string" &&
-        !storedToken.startsWith("{")
-      ) {
-        harvest_token = storedToken;
-      } else {
-        console.error("decryptHarvestCredentials decrypt error", decryptErr, {
-          userID,
-          row,
-        });
-        return res.status(500).json({ error: decryptErr.message });
-      }
-    }
-
-    req.harvest_token = harvest_token;
+    console.log(`${typeof storedToken}`);
+    let decrypted_token = decrypt(storedToken);
+    req.harvest_token = decrypted_token;
     req.harvest_id = storedId;
     req.harvest_email = storedEmail;
 

@@ -21,18 +21,20 @@ export function postHarvestCredentials(req, res) {
 }
 
 export async function getData(req, res) {
-  console.log(req.harvest_token, req.harvest_id, req.harvest_email);
+  const options = {
+    headers: {
+      Authorization: `Bearer ${req.harvest_token}`,
+      "Harvest-Account-Id": req.harvest_id,
+      "User-Agent": `MyApp (${req.harvest_email})`,
+    },
+  };
+  console.log(options);
   const response = await fetch(
     " https://api.harvestapp.com/v2/users/me/project_assignments",
-    {
-      headers: {
-        Authorization: `Bearer ${req.harvest_token}`,
-        "Harvest-Account-Id": req.harvest_ID,
-        "User-Agent": `MyApp (${req.email})`,
-      },
-    },
+    options,
   );
 
   const data = await response.json();
+  res.status(200).json(data.project_assignments);
   console.log(data);
 }
