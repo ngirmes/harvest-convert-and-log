@@ -18,14 +18,19 @@ export default function AuthPanel({
   setSessionExpired,
   api,
 }: AuthPanelProps) {
-  const [authModal, setAuthModal] = useState(false);
+  const [authModal, setAuthModal] = useState<boolean>(false);
+  const [harvestModal, setHarvestModal] = useState<boolean>(false);
   const authModalRef = useRef<HTMLDivElement>(null);
+  const harvestModalRef = useRef<HTMLDivElement>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loginOrRegister, setLoginOrRegister] = useState<"Login" | "Register">(
     "Login",
   );
-  const [regMessage, setRegMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+  const [harvestToken, setHarvestToken] = useState<string | null>(null);
+  const [harvestId, setHarvestId] = useState<string | null>(null);
+  const [harvestEmail, setHarvestEmail] = useState<string | null>(null);
   // const [timer, setTimer] = useState(15 * 60 * 1000);
 
   useEffect(() => {
@@ -35,6 +40,23 @@ export default function AuthPanel({
         !authModalRef.current.contains(e.target as Node)
       ) {
         setAuthModal(false);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        harvestModalRef.current &&
+        !harvestModalRef.current.contains(e.target as Node)
+      ) {
+        setHarvestModal(false);
       }
     };
 
@@ -67,6 +89,9 @@ export default function AuthPanel({
   function reset() {
     setEmail("");
     setPassword("");
+    setHarvestEmail(null);
+    setHarvestId(null);
+    setHarvestToken(null);
   }
 
   async function login() {
@@ -108,14 +133,14 @@ export default function AuthPanel({
         }),
       });
 
-      setRegMessage(response.message);
+      setMessage(response.message);
       setTimeout(() => {
-        setRegMessage(null);
+        setMessage(null);
       }, 2000);
       reset();
     } catch (error) {
       console.error("Registration failed:", error);
-      setRegMessage("Registration failed. Please try again.");
+      setMessage("Registration failed. Please try again.");
     }
   }
 
@@ -123,6 +148,33 @@ export default function AuthPanel({
     localStorage.removeItem("token");
     setIsAuthenticated(false);
     reset();
+  }
+
+  async function setCredentials() {
+    const token = localStorage.getItem("token");
+    try {
+      const response = await api<{ message: string }>("/harvest", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          harvestToken,
+          harvestId,
+          harvestEmail,
+        }),
+      });
+
+      setMessage(response.message);
+      setTimeout(() => {
+        setMessage(null);
+      }, 2000);
+      reset();
+    } catch (error) {
+      console.error("Setting credentials failed:", error);
+      setMessage("Setting credentials failed. Please try again.");
+    }
   }
 
   if (!isAuthenticated) {
@@ -164,10 +216,10 @@ export default function AuthPanel({
                 {loginOrRegister}
               </button>
               <div className="italic text-green-600 text-sm">
-                {regMessage && (
+                {message && (
                   <p className="text-sm p-2 flex">
                     <CircleCheck className="text-green-600" />
-                    Registration Successful <br></br>
+                    {message} <br></br>
                     Please log in
                   </p>
                 )}
@@ -206,7 +258,61 @@ export default function AuthPanel({
       <div className="w-full overflow-y-auto flex-1">
         <Instructions />
       </div>
-      <div>
+      <div className="relative">
+        {harvestModal && (
+          <div
+            ref={harvestModalRef}
+            className="absolute bottom-full mb-2 bg-orange-50 p-8 rounded-lg shadow-lg border-2 border-black/70 w-72"
+          >
+            <label htmlFor="token" />
+            <input
+              id="token"
+              type="password"
+              placeholder="Token"
+              onChange={(e) => setHarvestToken(e.target.value)}
+              className="w-full mb-4 px-3 py-2 border rounded-lg border-black/70"
+            />
+            <label htmlFor="id" />
+            <input
+              id="id"
+              type="text"
+              placeholder="Account Id"
+              onChange={(e) => setHarvestId(e.target.value)}
+              className="w-full mb-4 px-3 py-2 border rounded-lg border-black/70"
+            />
+            <label htmlFor="harvestEmail" />
+            <input
+              id="harvestEmail"
+              type="text"
+              placeholder="Harvest Email"
+              onChange={(e) => setHarvestEmail(e.target.value)}
+              className="w-full mb-4 px-3 py-2 border rounded-lg border-black/70"
+            />
+            <button
+              onClick={() => setCredentials()}
+              className="rounded-lg border-2 border-black/70 bg-orange-50 px-6 py-3 text-lg font-bold text-black/70 hover:bg-orange-300 w-56"
+            >
+              Submit Credentials
+            </button>
+            <div className="italic text-green-600 text-sm">
+              {message && (
+                <p className="text-sm p-2 flex">
+                  <CircleCheck className="text-green-600" />
+                  {message} <br></br>
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setHarvestModal((prev) => !prev);
+          }}
+          className="rounded-lg border-2 border-black/70 bg-orange-50 px-6 py-3 text-lg font-bold text-black/70 hover:bg-orange-300 w-72 mb-2"
+        >
+          Set Credentials
+        </button>
         <button
           onClick={() => logout()}
           className="rounded-lg border-2 border-black/70 bg-orange-50 px-6 py-3 text-lg font-bold text-black/70 hover:bg-orange-300 w-72"

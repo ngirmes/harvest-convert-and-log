@@ -3,7 +3,6 @@ import { useState } from "react";
 import AuthPanel from "../components/AuthPanel";
 import MainPanel from "../components/MainPanel";
 import Header from "../components/Header";
-import Instructions from "../components/Instructions";
 
 async function api<T>(url: string, options?: RequestInit): Promise<T> {
   const response = await fetch(url, options);

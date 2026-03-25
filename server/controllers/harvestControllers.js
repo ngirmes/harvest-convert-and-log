@@ -20,6 +20,26 @@ export function postHarvestCredentials(req, res) {
   );
 }
 
+function parseHarvestProjects(data) {
+  return data.map((projectAssignment) => {
+    const projectId = projectAssignment.project.id;
+    const projectName = projectAssignment.project.name;
+
+    const tasks = projectAssignment.task_assignments.map((taskAssignment) => {
+      return {
+        id: taskAssignment.task.id,
+        name: taskAssignment.task.name,
+      };
+    });
+
+    return {
+      id: projectId,
+      name: projectName,
+      tasks: tasks,
+    };
+  });
+}
+
 export async function getData(req, res) {
   const options = {
     headers: {
@@ -28,13 +48,13 @@ export async function getData(req, res) {
       "User-Agent": `MyApp (${req.harvest_email})`,
     },
   };
-  console.log(options);
   const response = await fetch(
     " https://api.harvestapp.com/v2/users/me/project_assignments",
     options,
   );
 
   const data = await response.json();
-  res.status(200).json(data.project_assignments);
-  console.log(data);
+  const parsed = parseHarvestProjects(data.project_assignments);
+  res.status(200).json({ parsed });
+  console.log(parsed);
 }
