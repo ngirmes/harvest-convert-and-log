@@ -6,6 +6,8 @@ import Header from "../components/Header";
 
 async function api<T>(url: string, options?: RequestInit): Promise<T> {
   const response = await fetch(url, options);
+  console.log(response.status);
+
   const data = await response.json();
   if (!response.ok) {
     throw new Error(data.error || "Request Failed");

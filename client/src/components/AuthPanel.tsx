@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { CircleCheck } from "lucide-react";
 import type { ApiFunction } from "../pages/Dashboard";
 import Instructions from "./Instructions";
+import Button from "./Button";
 
 type AuthPanelProps = {
   isAuthenticated: boolean;
@@ -22,15 +23,15 @@ export default function AuthPanel({
   const [harvestModal, setHarvestModal] = useState<boolean>(false);
   const authModalRef = useRef<HTMLDivElement>(null);
   const harvestModalRef = useRef<HTMLDivElement>(null);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [loginOrRegister, setLoginOrRegister] = useState<"Login" | "Register">(
     "Login",
   );
   const [message, setMessage] = useState<string | null>(null);
-  const [harvestToken, setHarvestToken] = useState<string | null>(null);
-  const [harvestId, setHarvestId] = useState<string | null>(null);
-  const [harvestEmail, setHarvestEmail] = useState<string | null>(null);
+  const [harvest_token, setHarvestToken] = useState<string | null>(null);
+  const [harvest_id, setHarvestId] = useState<string | null>(null);
+  const [harvest_email, setHarvestEmail] = useState<string | null>(null);
   // const [timer, setTimer] = useState(15 * 60 * 1000);
 
   useEffect(() => {
@@ -160,9 +161,9 @@ export default function AuthPanel({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          harvestToken,
-          harvestId,
-          harvestEmail,
+          harvest_token,
+          harvest_id,
+          harvest_email,
         }),
       });
 
@@ -227,28 +228,26 @@ export default function AuthPanel({
             </div>
           )}
 
-          <button
-            onClick={(e) => {
+          <Button
+            onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
               setAuthModal((prev) => !prev);
               setLoginOrRegister("Login");
             }}
-            className="rounded-lg border-2 border-black/70 bg-orange-50 px-6 py-3 text-lg font-bold text-black/70 hover:bg-orange-300 w-72"
           >
             Login
-          </button>
+          </Button>
         </div>
 
-        <button
-          onClick={(e) => {
+        <Button
+          onClick={(e: React.MouseEvent) => {
             e.stopPropagation();
             setAuthModal((prev) => !prev);
             setLoginOrRegister("Register");
           }}
-          className="rounded-lg border-2 border-black/70 bg-orange-50 px-6 py-3 text-lg font-bold text-black/70 hover:bg-orange-300  w-72"
         >
           Register
-        </button>
+        </Button>
       </div>
     );
   }
@@ -304,21 +303,16 @@ export default function AuthPanel({
             </div>
           </div>
         )}
-        <button
-          onClick={(e) => {
+        <Button
+          onClick={(e: React.MouseEvent) => {
             e.stopPropagation();
             setHarvestModal((prev) => !prev);
           }}
-          className="rounded-lg border-2 border-black/70 bg-orange-50 px-6 py-3 text-lg font-bold text-black/70 hover:bg-orange-300 w-72 mb-2"
         >
           Set Credentials
-        </button>
-        <button
-          onClick={() => logout()}
-          className="rounded-lg border-2 border-black/70 bg-orange-50 px-6 py-3 text-lg font-bold text-black/70 hover:bg-orange-300 w-72"
-        >
-          Logout
-        </button>
+        </Button>
+        <div className="p-1" />
+        <Button onClick={logout}>Logout</Button>
       </div>
     </div>
   );
