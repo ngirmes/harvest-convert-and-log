@@ -10,7 +10,7 @@ import {
   embed,
 } from "../controllers/apiControllers.js";
 
-import { projectSchema, tasksSchema } from "../validation/apiSchemas.js";
+import { projectSchema } from "../validation/apiSchemas.js";
 
 routerAPI.post("/project", validate(projectSchema), postProject);
 routerAPI.get("/projects", getProjects);

@@ -1,7 +1,6 @@
 import { CornerRightDown } from "lucide-react";
 import { useState, useEffect, useTransition } from "react";
 import type { ApiFunction } from "../pages/Dashboard";
-import { MoveRight } from "lucide-react";
 
 type MainPanelProps = {
   isAuthenticated: boolean;
@@ -77,6 +76,9 @@ export default function MainPanel({
 
   async function runMatcher() {
     const token = localStorage.getItem("token");
+    const workDescriptions = textboxInput.split(",");
+    const taskNames = selectedProject.tasks.map((t) => t.name);
+    console.log(taskNames);
 
     const response = await fetch("/api/embed", {
       method: "POST",
@@ -85,12 +87,13 @@ export default function MainPanel({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        description: textboxInput,
-        tasks: selectedProject.tasks,
+        workDescriptions: workDescriptions,
+        tasks: taskNames,
       }),
     });
 
     const data = await response.json();
+
     if (response.status === 401) {
       localStorage.removeItem("token");
       setIsAuthenticated(false);
@@ -100,6 +103,7 @@ export default function MainPanel({
       console.log(data);
     }
   }
+
   async function getProjects() {
     try {
       const token = localStorage.getItem("token");

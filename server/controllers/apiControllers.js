@@ -87,18 +87,24 @@ function cosineSimilarity(a, b) {
 }
 
 export const embed = async (req, res) => {
-  const { description, tasks } = req.body;
+  const { workDescriptions, tasks } = req.body;
   const client = new OpenAI();
-  const data = [description, ...tasks];
+  console.log(workDescriptions, tasks);
 
-  const embedding = await client.embeddings.create({
+  const workEmbeddings = await client.embeddings.create({
     model: "text-embedding-3-small",
-    input: data,
+    input: workDescriptions,
+    encoding_format: "float",
+  });
+  const taskEmbeddings = await client.embeddings.create({
+    model: "text-embedding-3-small",
+    input: tasks,
     encoding_format: "float",
   });
   let bestScore = -Infinity;
   let bestTask = null;
-
+  console.log(workEmbeddings, taskEmbeddings);
+  /*
   const descriptionVector = embedding.data[0].embedding;
 
   for (let i = 1; i < embedding.data.length; i++) {
@@ -111,7 +117,7 @@ export const embed = async (req, res) => {
     }
   }
 
-  res.json({ bestTask, confidence: bestScore });
+  res.json({ bestTask, confidence: bestScore }); */
 };
 /*
 export const harvestMe = (req, res) => {

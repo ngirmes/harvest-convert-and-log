@@ -9,8 +9,8 @@ export default function Header() {
       {/* Header */}
       <header className="flex items-center justify-between w-full p-4 bg-orange-50 border-b-2 border-black/70">
         <div>
-          <h1 className="font-bold text-3xl">Harvest Auto Logger</h1>
-          <p className="text-md italic text-black/60">
+          <h1 className="font-bold text-2xl">Harvest Auto Logger</h1>
+          <p className="text-sm italic text-black/60">
             Developed by Nicholas Girmes
           </p>
         </div>
@@ -22,7 +22,7 @@ export default function Header() {
             rel="noopener noreferrer"
             className="hover:text-orange-500"
           >
-            <Github size={40} />
+            <Github size={30} />
           </a>
 
           <a
@@ -31,14 +31,14 @@ export default function Header() {
             rel="noopener noreferrer"
             className="hover:text-orange-500"
           >
-            <Linkedin size={40} />
+            <Linkedin size={30} />
           </a>
 
           <button
             onClick={() => setOpen(true)}
             className="hover:text-orange-500"
           >
-            <Info size={40} />
+            <Info size={30} />
           </button>
         </div>
       </header>
@@ -109,7 +109,7 @@ export default function Header() {
                 </div>
               </div>
 
-              <div className="text-xs text-gray-500">v1.0.0 • MIT License</div>
+              <div className="text-xs text-gray-500">v1.0.0</div>
             </div>
           </div>
         </div>
