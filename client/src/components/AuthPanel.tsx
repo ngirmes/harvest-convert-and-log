@@ -28,6 +28,7 @@ export default function AuthPanel({
   const [loginOrRegister, setLoginOrRegister] = useState<"Login" | "Register">(
     "Login",
   );
+
   const [message, setMessage] = useState<string | null>(null);
   const [harvest_token, setHarvestToken] = useState<string | null>(null);
   const [harvest_id, setHarvestId] = useState<string | null>(null);
@@ -167,10 +168,7 @@ export default function AuthPanel({
         }),
       });
 
-      setMessage(response.message);
-      setTimeout(() => {
-        setMessage(null);
-      }, 2000);
+      alert(response.message);
       reset();
     } catch (error) {
       console.error("Setting credentials failed:", error);

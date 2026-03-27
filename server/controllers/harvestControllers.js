@@ -54,7 +54,9 @@ export async function getData(req, res) {
   );
 
   const data = await response.json();
-  const parsed = parseHarvestProjects(data.project_assignments);
-  res.status(200).json({ parsed });
-  console.log(parsed);
+  const projects = parseHarvestProjects(data.project_assignments);
+  res
+    .status(200)
+    .json({ message: "Projects successfully retrieved", projects });
+  console.log(projects);
 }

@@ -24,3 +24,8 @@
 
 -more interactive and better and friendlier UI such as
 -login buttin didnt actually login
+
+-add comments to code
+-create good read me
+-modify matcher logic/math to be able to handle multiple tasks
+-implement post times logic/endpoints/fetches

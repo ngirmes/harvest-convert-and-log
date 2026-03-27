@@ -6,7 +6,6 @@ import Header from "../components/Header";
 
 async function api<T>(url: string, options?: RequestInit): Promise<T> {
   const response = await fetch(url, options);
-  console.log(response.status);
 
   const data = await response.json();
   if (!response.ok) {
@@ -22,8 +21,8 @@ export default function Dashboard() {
 
   return (
     <>
+      <Header />
       <div className="bg-orange-200 h-screen w-screen flex items-center justify-center">
-        <Header />
         <div className="grid grid-cols-3 grid-rows-1 gap-6 relative bg-orange-50 p-8 rounded-lg shadow-lg w-3/4 h-3/4 border-2 border-black/70">
           <MainPanel
             isAuthenticated={isAuthenticated}
