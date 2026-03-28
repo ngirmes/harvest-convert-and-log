@@ -1,11 +1,7 @@
 import { z } from "zod";
 
-export const projectSchema = z.object({
-  name: z.string().min(1, "Project name is required"),
-});
-
-export const tasksSchema = z.object({
-  tasks: z
-    .array(z.string().min(1, "Task name is required"))
-    .min(1, "At least one task is required"),
+export const harvestSchema = z.object({
+  harvest_token: z.string().min(1, "Harvest token is required"),
+  harvest_id: z.string().min(1, "Harvest ID is required"),
+  harvest_email: z.email().min(1, "Harvest email is required"),
 });

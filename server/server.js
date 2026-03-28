@@ -16,7 +16,6 @@ const PORT = process.env.PORT || 3000;
 
 import routerAuth from "./routes/authRoutes.js";
 import routerApi from "./routes/apiRoutes.js";
-import routerHarvest from "./routes/harvestRoutes.js";
 import authenticateToken from "./middleware/authenticateToken.js";
 
 app.use(cors());
@@ -46,7 +45,6 @@ app.get("/", (req, res) => {
 
 app.use("/auth", routerAuth);
 app.use("/api", authenticateToken, routerApi);
-app.use("/harvest", authenticateToken, routerHarvest);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

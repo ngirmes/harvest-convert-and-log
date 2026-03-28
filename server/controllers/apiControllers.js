@@ -1,74 +1,6 @@
 import { db } from "../db/db.js";
 import OpenAI from "openai";
 
-export const harvestCredentials = (req, res) => {
-  const { harvest_token, harvest_ID } = req.body;
-  const userId = req.user.userId;
-  const sql = `UPDATE users SET harvest_token = ?, harvest_ID = ? WHERE id = ?`;
-
-  db.run(sql, [harvest_token, harvest_ID, userId], (err) => {
-    if (err) {
-      console.error("Error updating harvest token", err);
-      return res.status(500).json({ error: "Internal server error" });
-    }
-    res.json({ message: "Harvest credentials updated successfully" });
-  });
-};
-
-export const postProject = (req, res) => {
-  const { name } = req.body;
-  const userId = req.user.userId;
-  const sql = `INSERT INTO projects (name, user_id) VALUES (?, ?)`;
-
-  db.run(sql, [name, userId], function (err) {
-    if (err) {
-      console.error("Error creating project", err);
-      return res.status(500).json({ error: "Internal server error" });
-    }
-    res.status(201).json({
-      message: "Project created successfully",
-      project: {
-        id: this.lastID,
-        name,
-        tasks: [],
-      },
-    });
-  });
-};
-
-export const getProjects = (req, res) => {
-  const userId = req.user.userId;
-  const sql = `SELECT id, name, tasks FROM projects WHERE user_id = ?`;
-
-  db.all(sql, [userId], (err, rows) => {
-    if (err) {
-      console.error("Error fetching projects", err);
-      return res.status(500).json({ error: "Internal server error" });
-    }
-    const projects = rows.map((row) => ({
-      id: row.id,
-      name: row.name,
-      tasks: JSON.parse(row.tasks || "[]"),
-    }));
-    res.json({ projects });
-  });
-};
-
-export const patchTasks = (req, res) => {
-  const projectId = req.params.id;
-  const { tasks } = req.body;
-  console.log(tasks);
-  const sql = `UPDATE projects SET tasks = ? WHERE id = ?`;
-
-  db.run(sql, [JSON.stringify(tasks), projectId], function (err) {
-    if (err) {
-      console.error("Error adding tasks to project", err);
-      return res.status(500).json({ error: "Internal server error" });
-    }
-    res.json({ message: "Tasks added to project successfully" });
-  });
-};
-
 function cosineSimilarity(a, b) {
   let dot = 0;
   let magA = 0;
@@ -86,7 +18,7 @@ function cosineSimilarity(a, b) {
   return dot / (magA * magB);
 }
 
-export const embed = async (req, res) => {
+export const getEmbeddings = async (req, res) => {
   const { workDescriptions, tasks } = req.body;
   const client = new OpenAI();
   console.log(workDescriptions, tasks);
@@ -101,23 +33,27 @@ export const embed = async (req, res) => {
     input: tasks,
     encoding_format: "float",
   });
-  let bestScore = -Infinity;
-  let bestTask = null;
-  console.log(workEmbeddings, taskEmbeddings);
-  /*
-  const descriptionVector = embedding.data[0].embedding;
 
-  for (let i = 1; i < embedding.data.length; i++) {
-    const taskVector = embedding.data[i].embedding;
-    const score = cosineSimilarity(descriptionVector, taskVector);
+  console.log(workEmbeddings.data.length, taskEmbeddings.data.length);
+  const matches = [];
 
-    if (score > bestScore) {
-      bestScore = score;
-      bestTask = tasks[i - 1];
+  for (let i = 0; i < workEmbeddings.data.length; i++) {
+    const workVector = workEmbeddings.data[i].embedding;
+    let bestScore = -Infinity;
+    let bestTask = null;
+    for (let i = 0; i < taskEmbeddings.data.length; i++) {
+      const taskVector = taskEmbeddings.data[i].embedding;
+      const score = cosineSimilarity(workVector, taskVector);
+
+      if (score > bestScore) {
+        bestScore = score;
+        bestTask = tasks[i];
+      }
     }
+    matches.push(bestTask);
   }
 
-  res.json({ bestTask, confidence: bestScore }); */
+  res.json({ matches });
 };
 /*
 export const harvestMe = (req, res) => {
@@ -129,3 +65,63 @@ export const harvestMe = (req, res) => {
       console.error("Error fetching harvest credentials", err);
       return res.status(500).json({ error: "Internal server error" });
     } */
+
+export function postHarvestCredentials(req, res) {
+  const userID = req.user.userID;
+  const harvest_token = req.harvest_token;
+  const { harvest_id, harvest_email } = req.body;
+  const sql = `UPDATE users SET harvest_token = ?, harvest_id = ?, harvest_email = ? WHERE id = ?`;
+
+  db.run(
+    sql,
+    [JSON.stringify(harvest_token), harvest_id, harvest_email, userID],
+    (err) => {
+      if (err) {
+        res.status(500).json({ error: err.message });
+      }
+
+      res.status(200).json({ message: "Credentials successfully stored" });
+    },
+  );
+}
+
+function parseHarvestProjects(data) {
+  return data.map((projectAssignment) => {
+    const projectId = projectAssignment.project.id;
+    const projectName = projectAssignment.project.name;
+
+    const tasks = projectAssignment.task_assignments.map((taskAssignment) => {
+      return {
+        id: taskAssignment.task.id,
+        name: taskAssignment.task.name,
+      };
+    });
+
+    return {
+      id: projectId,
+      name: projectName,
+      tasks: tasks,
+    };
+  });
+}
+
+export async function getHarvestProjects(req, res) {
+  const options = {
+    headers: {
+      Authorization: `Bearer ${req.harvest_token}`,
+      "Harvest-Account-Id": req.harvest_id,
+      "User-Agent": `MyApp (${req.harvest_email})`,
+    },
+  };
+  const response = await fetch(
+    " https://api.harvestapp.com/v2/users/me/project_assignments",
+    options,
+  );
+
+  const data = await response.json();
+  const projects = parseHarvestProjects(data.project_assignments);
+  res
+    .status(200)
+    .json({ message: "Projects successfully retrieved", projects });
+  console.log(projects);
+}

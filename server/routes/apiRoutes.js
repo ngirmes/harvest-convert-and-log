@@ -1,20 +1,26 @@
 import express from "express";
 const routerAPI = express.Router();
 
-import validate from "../validation/validate.js";
+import encryptHarvestCredentials from "../middleware/encryptHarvestCredentials.js";
+import decryptHarvestCredentials from "../middleware/decryptHarvestCredentials.js";
 
 import {
-  postProject,
-  getProjects,
-  patchTasks,
-  embed,
+  postHarvestCredentials,
+  getHarvestProjects,
+  getEmbeddings,
 } from "../controllers/apiControllers.js";
 
-import { projectSchema } from "../validation/apiSchemas.js";
+import validate from "../validation/validate.js";
+import { harvestSchema } from "../validation/apiSchemas.js";
 
-routerAPI.post("/project", validate(projectSchema), postProject);
-routerAPI.get("/projects", getProjects);
-routerAPI.patch("/projects/:id", patchTasks);
-routerAPI.post("/embed", embed);
+routerAPI.post(
+  "/credentials",
+  validate(harvestSchema),
+  encryptHarvestCredentials,
+  postHarvestCredentials,
+);
+routerAPI.get("/projects", decryptHarvestCredentials, getHarvestProjects);
+routerAPI.post("/embed", getEmbeddings);
 // routerAPI.get("/harvest-me", authenticateToken, harvestMe);
+
 export default routerAPI;

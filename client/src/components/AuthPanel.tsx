@@ -8,7 +8,6 @@ type AuthPanelProps = {
   isAuthenticated: boolean;
   setIsAuthenticated: (value: boolean) => void;
   sessionExpired: boolean;
-  setSessionExpired: (value: boolean) => void;
   api: ApiFunction;
 };
 
@@ -16,23 +15,22 @@ export default function AuthPanel({
   isAuthenticated,
   setIsAuthenticated,
   sessionExpired,
-  setSessionExpired,
   api,
 }: AuthPanelProps) {
-  const [authModal, setAuthModal] = useState<boolean>(false);
-  const [harvestModal, setHarvestModal] = useState<boolean>(false);
+  const [authModal, setAuthModal] = useState(false);
+  const [harvestModal, setHarvestModal] = useState(false);
   const authModalRef = useRef<HTMLDivElement>(null);
   const harvestModalRef = useRef<HTMLDivElement>(null);
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [loginOrRegister, setLoginOrRegister] = useState<"Login" | "Register">(
     "Login",
   );
 
-  const [message, setMessage] = useState<string | null>(null);
-  const [harvest_token, setHarvestToken] = useState<string | null>(null);
-  const [harvest_id, setHarvestId] = useState<string | null>(null);
-  const [harvest_email, setHarvestEmail] = useState<string | null>(null);
+  const [message, setMessage] = useState("");
+  const [harvest_token, setHarvestToken] = useState("");
+  const [harvest_id, setHarvestId] = useState("");
+  const [harvest_email, setHarvestEmail] = useState("");
   // const [timer, setTimer] = useState(15 * 60 * 1000);
 
   useEffect(() => {
@@ -69,31 +67,21 @@ export default function AuthPanel({
     };
   }, []);
 
-  useEffect(() => {
-    async function checkAuth() {
-      const token = localStorage.getItem("token");
-      if (token) {
-        const response = await fetch("/auth/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = await response.json();
-        console.log(data);
-        if (data.message === "Valid token") {
-          return setIsAuthenticated(true);
-        }
-      }
+  function handleSubmit(e: React.SubmitEvent) {
+    e.preventDefault();
+    if (loginOrRegister === "Login") {
+      login();
+    } else {
+      register();
     }
-    checkAuth();
-  }, []);
+  }
 
   function reset() {
     setEmail("");
     setPassword("");
-    setHarvestEmail(null);
-    setHarvestId(null);
-    setHarvestToken(null);
+    setHarvestEmail("");
+    setHarvestId("");
+    setHarvestToken("");
   }
 
   async function login() {
@@ -112,10 +100,8 @@ export default function AuthPanel({
         },
       );
 
-      console.log(response.message);
-      localStorage.setItem("token", response.token);
-      reset();
-      setSessionExpired(false);
+      console.log(response.data.message);
+      localStorage.setItem("token", response.data.token);
       setIsAuthenticated(true);
     } catch (error) {
       console.log(error);
@@ -135,41 +121,39 @@ export default function AuthPanel({
         }),
       });
 
-      setMessage(response.message);
+      setMessage(response.data.message);
       setTimeout(() => {
-        setMessage(null);
+        setMessage("");
       }, 2000);
-      reset();
     } catch (error) {
       console.error("Registration failed:", error);
       setMessage("Registration failed. Please try again.");
     }
   }
 
-  function logout() {
-    localStorage.removeItem("token");
-    setIsAuthenticated(false);
-    reset();
-  }
-
   async function setCredentials() {
     const token = localStorage.getItem("token");
     try {
-      const response = await api<{ message: string }>("/harvest", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+      const response = await api<{ status: number | null; message: string }>(
+        "/api/credentials",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            harvest_token,
+            harvest_id,
+            harvest_email,
+          }),
         },
-        body: JSON.stringify({
-          harvest_token,
-          harvest_id,
-          harvest_email,
-        }),
-      });
+      );
 
-      alert(response.message);
-      reset();
+      if (response.status === 401) {
+        reset();
+      }
+      alert(response.data.message);
     } catch (error) {
       console.error("Setting credentials failed:", error);
       setMessage("Setting credentials failed. Please try again.");
@@ -190,30 +174,27 @@ export default function AuthPanel({
               ref={authModalRef}
               className="absolute bottom-full mb-2 right-0 bg-orange-50 p-8 rounded-lg shadow-lg border-2 border-black/70 w-72"
             >
-              <input
-                type="text"
-                placeholder="Email"
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full mb-4 px-3 py-2 border rounded-lg border-black/70"
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full mb-4 px-3 py-2 border rounded-lg border-black/70"
-              />
-              <button
-                onClick={() => {
-                  if (loginOrRegister === "Login") {
-                    login();
-                  } else {
-                    register();
-                  }
-                }}
-                className="w-full bg-orange-300 text-black/70 font-bold py-2 rounded-lg hover:bg-orange-400"
-              >
-                {loginOrRegister}
-              </button>
+              {" "}
+              <form onSubmit={handleSubmit}>
+                <input
+                  type="text"
+                  placeholder="Email"
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full mb-4 px-3 py-2 border rounded-lg border-black/70"
+                />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full mb-4 px-3 py-2 border rounded-lg border-black/70"
+                />
+                <button
+                  type="submit"
+                  className="w-full bg-orange-300 text-black/70 font-bold py-2 rounded-lg hover:bg-orange-400"
+                >
+                  {loginOrRegister}
+                </button>
+              </form>
               <div className="italic text-green-600 text-sm">
                 {message && (
                   <p className="text-sm p-2 flex">
@@ -307,10 +288,10 @@ export default function AuthPanel({
             setHarvestModal((prev) => !prev);
           }}
         >
-          Set Credentials
+          Set Harvest Credentials
         </Button>
         <div className="p-1" />
-        <Button onClick={logout}>Logout</Button>
+        <Button onClick={() => setIsAuthenticated(false)}>Logout</Button>
       </div>
     </div>
   );
