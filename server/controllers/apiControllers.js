@@ -148,6 +148,6 @@ export async function postTimeEntries(req, res) {
     }),
   });
   const data = await response.json();
-  res.status(200).json({ data });
+  res.status(200).json({ data, message: "Entries successfully submitted" });
   console.log(data);
 }
