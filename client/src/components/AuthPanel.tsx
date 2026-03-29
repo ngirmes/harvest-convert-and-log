@@ -103,6 +103,7 @@ export default function AuthPanel({
       console.log(response.data.message);
       localStorage.setItem("token", response.data.token);
       setIsAuthenticated(true);
+      alert(response.data.message);
     } catch (error) {
       console.log(error);
     }
@@ -122,9 +123,7 @@ export default function AuthPanel({
       });
 
       setMessage(response.data.message);
-      setTimeout(() => {
-        setMessage("");
-      }, 2000);
+      alert(response.data.message);
     } catch (error) {
       console.error("Registration failed:", error);
       setMessage("Registration failed. Please try again.");
@@ -242,6 +241,12 @@ export default function AuthPanel({
             ref={harvestModalRef}
             className="absolute bottom-full mb-2 bg-orange-50 p-8 rounded-lg shadow-lg border-2 border-black/70 w-72"
           >
+            <a
+              href="https://id.getharvest.com/sessions/new?go_back=%2Fdevelopers"
+              className="justify-center items-center text-blue-600 hover:text-blue-800 underline text-sm mb-2"
+            >
+              Visit Harvest Developers to obain credentials
+            </a>
             <label htmlFor="token" />
             <input
               id="token"
@@ -272,14 +277,7 @@ export default function AuthPanel({
             >
               Submit Credentials
             </button>
-            <div className="italic text-green-600 text-sm">
-              {message && (
-                <p className="text-sm p-2 flex">
-                  <CircleCheck className="text-green-600" />
-                  {message} <br></br>
-                </p>
-              )}
-            </div>
+            <div className="italic text-green-600 text-sm"></div>
           </div>
         )}
         <Button
