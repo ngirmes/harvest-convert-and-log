@@ -7,7 +7,7 @@ export default function Header() {
   return (
     <>
       {/* Header */}
-      <header className="flex items-center justify-between w-full p-4 bg-orange-50 border-b-2 border-black/70">
+      <header className="sticky top-0 z-50 flex items-center justify-between w-full p-4 bg-orange-50 border-b-2 border-black/70">
         <div>
           <h1 className="font-bold text-2xl">Harvest Auto Logger</h1>
           <p className="text-sm italic text-black/60">
