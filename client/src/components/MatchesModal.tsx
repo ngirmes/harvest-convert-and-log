@@ -1,6 +1,6 @@
 import type { Log } from "./MainPanel";
-import { useState } from "react";
-import { X } from "lucide-react";
+import React, { useState } from "react";
+import { Italic, X } from "lucide-react";
 
 type MatchesModalProps = {
   logs: Log[];
@@ -16,6 +16,7 @@ export default function MatchesModal({
   submitLogs,
 }: MatchesModalProps) {
   const [times, setTimes] = useState(logs.map(() => ({ start: "", end: "" })));
+  const [newLogs, setNewLogs] = useState<Log[]>(logs);
 
   function updateTime(index: number, field: "start" | "end", value: string) {
     setTimes((prev) =>
@@ -35,7 +36,7 @@ export default function MatchesModal({
     return Math.max((endMinutes - startMinutes) / 60, 0);
   }
 
-  const computedHours = logs.map((_, i) => {
+  const computedHours = newLogs.map((_, i) => {
     const base = calculateHours(times[i].start, times[i].end);
     return base;
   });
@@ -43,7 +44,7 @@ export default function MatchesModal({
   const totalHours = computedHours.reduce((a, b) => a + b, 0);
 
   function submit() {
-    const logsWithHours = logs.map((log, i) => ({
+    const logsWithHours = newLogs.map((log, i) => ({
       ...log,
       hours: computedHours[i],
     }));
@@ -62,45 +63,65 @@ export default function MatchesModal({
         </button>
         <h2 className="text-2xl font-bold mb-6 text-center">{projectName}</h2>
 
-        <div className="grid grid-cols-6 font-semibold border-b pb-2 mb-3">
+        <div className="grid grid-cols-6 text-center font-semibold border-b pb-2 mb-3 gap-2">
           <div>Task</div>
           <div>Description</div>
           <div>Start</div>
           <div>End</div>
-          <div>Hours</div>
-          <div></div>
+          <div className="text-center">Hours</div>
+          <div className="flex gap-2">
+            Date{" "}
+            <p className="flex text-sm italic text-center">
+              *defaults to current
+            </p>
+          </div>
         </div>
 
-        {logs.map((log, i) => (
+        {newLogs.map((log, i) => (
           <div
             key={i}
-            className="grid grid-cols-5 items-center gap-3 py-2 border-b"
+            className="grid grid-cols-6 items-center gap-2 py-2 border-b text-center"
           >
-            <div className="text-sm">{log.task_name}</div>
+            <div className="text-sm w-full">{log.task_name}</div>
 
-            <div className="text-sm text-gray-700">{log.notes}</div>
+            <div className="text-sm text-gray-700 w-full">{log.notes}</div>
 
             <input
               type="time"
               value={times[i].start}
               onChange={(e) => updateTime(i, "start", e.target.value)}
-              className="border rounded px-2 py-1"
+              className="border rounded px-2 py-1 w-full"
             />
 
             <input
               type="time"
               value={times[i].end}
               onChange={(e) => updateTime(i, "end", e.target.value)}
-              className="border rounded px-2 py-1"
+              className="border rounded px-2 py-1 w-full"
             />
 
-            <div className="text-sm font-medium text-center">
+            <div className="text-sm font-medium text-center w-full">
               {computedHours[i].toFixed(2)}
+            </div>
+
+            <div>
+              <input
+                type="date"
+                value={log.spent_date}
+                onChange={(e) => {
+                  setNewLogs((prev) =>
+                    prev.map((l, j) =>
+                      i === j ? { ...l, spent_date: e.target.value } : l,
+                    ),
+                  );
+                }}
+                className="text-sm font-medium w-full"
+              />
             </div>
           </div>
         ))}
 
-        <div className="flex justify-between items-center mt-6 border-t pt-4">
+        <div className="flex justify-between items-center pt-4">
           <div className="font-semibold text-lg">
             Total Hours: {totalHours.toFixed(2)}
           </div>

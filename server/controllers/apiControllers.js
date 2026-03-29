@@ -21,7 +21,6 @@ function cosineSimilarity(a, b) {
 export const getEmbeddings = async (req, res) => {
   const { workDescriptions, tasks } = req.body;
   const client = new OpenAI();
-  console.log(workDescriptions, tasks);
 
   const workEmbeddings = await client.embeddings.create({
     model: "text-embedding-3-small",
@@ -34,7 +33,6 @@ export const getEmbeddings = async (req, res) => {
     encoding_format: "float",
   });
 
-  console.log(workEmbeddings.data.length, taskEmbeddings.data.length);
   const matches = [];
 
   for (let i = 0; i < workEmbeddings.data.length; i++) {
@@ -123,31 +121,47 @@ export async function getHarvestProjects(req, res) {
   res
     .status(200)
     .json({ message: "Projects successfully retrieved", projects });
-  console.log(projects);
 }
 
 export async function postTimeEntries(req, res) {
-  console.log(`body: ${req.body}`);
+  console.log(`body: ${JSON.stringify(req.body)}`);
   const { logs } = req.body;
-  console.log(logs);
-  const testLog = logs[0];
-  const response = await fetch("https://api.harvestapp.com/v2/time_entries", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${req.harvest_token}`,
-      "Harvest-Account-Id": req.harvest_id,
-      "User-Agent": `MyApp (${req.harvest_email})`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      project_id: testLog.project_id,
-      task_id: testLog.task_id,
-      spent_date: testLog.spent_date,
-      hours: testLog.hours,
-      notes: testLog.notes,
-    }),
+
+  const responses = await Promise.all(
+    logs.map((log) =>
+      fetch("https://api.harvestapp.com/v2/time_entries", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${req.harvest_token}`,
+          "Harvest-Account-Id": req.harvest_id,
+          "User-Agent": `MyApp (${req.harvest_email})`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          project_id: log.project_id,
+          task_id: log.task_id,
+          spent_date: log.spent_date,
+          hours: log.hours,
+          notes: log.notes,
+        }),
+      }),
+    ),
+  );
+
+  const data = await Promise.all(responses.map((r) => r.json()));
+
+  const failed = responses.find((r) => !r.ok);
+
+  if (failed) {
+    return res
+      .status(failed.status)
+      .json({ message: "One or more entries failed", data });
+  }
+
+  res.status(200).json({
+    message: "Entries successfully submitted",
+    data,
   });
-  const data = await response.json();
-  res.status(200).json({ data, message: "Entries successfully submitted" });
+
   console.log(data);
 }

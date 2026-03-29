@@ -140,7 +140,6 @@ export default function MainPanel({ api }: MainPanelProps) {
         reset();
       }
       setProjects(response.data.projects);
-      console.log(projects);
       alert(response.data.message);
     } catch (error) {
       console.error("Getting projects failed: ", error);
@@ -148,7 +147,6 @@ export default function MainPanel({ api }: MainPanelProps) {
   }
 
   async function submitLogs(logs: Log[]) {
-    console.log(`hi ${JSON.stringify(logs)}, ${typeof logs}`);
     try {
       const token = localStorage.getItem("token");
       const response = await api<{ status: number | null; message: string }>(
@@ -164,7 +162,7 @@ export default function MainPanel({ api }: MainPanelProps) {
           }),
         },
       );
-
+      alert("Entries successfully submitted");
       if (response.status === 401) {
         reset();
         alert(response.data.message);
@@ -209,7 +207,6 @@ export default function MainPanel({ api }: MainPanelProps) {
                 tasks: [],
               };
               setSelectedProject(project);
-              console.log(selectedProject);
               setShowTasks(false); // Hide tasks when switching projects
             }}
             className="w-full p-2 border-2 border-black/70 rounded-lg"

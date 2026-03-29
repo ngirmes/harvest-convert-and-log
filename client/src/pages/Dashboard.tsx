@@ -22,6 +22,7 @@ export default function Dashboard() {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
     setSessionExpired(true);
+    alert("Session expired. Please log back in.");
   }
 
   async function api<T>(

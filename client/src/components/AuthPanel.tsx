@@ -100,7 +100,6 @@ export default function AuthPanel({
         },
       );
 
-      console.log(response.data.message);
       localStorage.setItem("token", response.data.token);
       setIsAuthenticated(true);
       alert(response.data.message);

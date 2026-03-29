@@ -48,13 +48,11 @@ export default function decryptHarvestCredentials(req, res, next) {
       console.warn("decryptHarvestCredentials missing fields", { userID, row });
       return res.status(400).json({ error: "Necessary credentials not found" });
     }
-    console.log(`${typeof storedToken}`);
     let decrypted_token = decrypt(storedToken);
     req.harvest_token = decrypted_token;
     req.harvest_id = storedId;
     req.harvest_email = storedEmail;
 
-    console.log("Decrypted harvest credentials for user", userID);
     next();
   });
 }

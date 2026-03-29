@@ -26,8 +26,6 @@ function encrypt(data) {
 }
 
 export default function encryptHarvestCredentials(req, res, next) {
-  console.log("err917-4");
-
   const { harvest_token } = req.body;
   if (!harvest_token) {
     return res.status(400).json({ error: "Missing credentials" });
