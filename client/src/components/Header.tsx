@@ -26,7 +26,7 @@ export default function Header() {
           </a>
 
           <a
-            href="www.linkedin.com/in/nicholas-girmes"
+            href="https://www.linkedin.com/in/nicholas-girmes"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-orange-500"
@@ -98,7 +98,7 @@ export default function Header() {
                   </a>
 
                   <a
-                    href="www.linkedin.com/in/nicholas-girmes"
+                    href="https://www.linkedin.com/in/nicholas-girmes"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-1 hover:text-orange-500"
