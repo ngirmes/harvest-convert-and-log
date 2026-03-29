@@ -13,31 +13,18 @@ export default function Instructions() {
       <h2 className="">Quick Guide: Using the Time Logger</h2>
 
       <br />
-      <h3>1. Create a Project</h3>
+      <h3>1. Submit harvest credentials if necessary</h3>
       <ul className="list-disc list-inside pl-5">
         <li>
-          Click <strong>Create Project</strong>.
+          Click <strong>Get Projects from Harvest</strong>.
         </li>
-        <li>
-          Enter a name for the project you want to track your work under
-          (suggested to use same name as in Harvest).
-        </li>
+        <li>Select which project you'd like to log time for</li>
       </ul>
       <br />
-      <h3>2. Add Tasks to the Project</h3>
-      <ul className="list-disc list-inside pl-5">
-        <li>
-          Add the tasks associated with that project (for example:{" "}
-          <em>1: Research</em>, <em>2: Documentation</em>,{" "}
-          <em>3: Field Work</em>, etc.).
-        </li>
-        <li>
-          Tasks act as <strong>categories</strong> that the system will try to
-          match your work against.
-        </li>
-      </ul>
-      <br />
-      <h3>3. Enter Your Work Description</h3>
+      <h3>
+        2. Enter your task notes for each entry you'd like to log separated by
+        commas (equivalent to notes section of Harvest){" "}
+      </h3>
       <ul className="list-disc list-inside pl-5">
         <li>
           When you perform work, write a short description of what you did in
@@ -57,7 +44,7 @@ export default function Instructions() {
         <li>“Met with client to review design changes”</li>
       </ul>
       <br />
-      <h3>4. Run the Matcher</h3>
+      <h3>3. Run the Matcher</h3>
       <ul className="list-disc list-inside pl-5">
         <li>
           Click <strong>Run Matcher</strong>.
@@ -66,20 +53,17 @@ export default function Instructions() {
           The system uses <strong>embedding-based matching</strong> to compare
           your description with the tasks defined in the project.
         </li>
+        <li>It will then return the task that best matches each description</li>
         <li>
-          It will suggest the task that best matches the context of your
-          description.
+          Click <strong>See Logs</strong>
         </li>
       </ul>
       <br />
-      <h3>5. Review the Suggested Match</h3>
+      <h3>4. Review the logs</h3>
       <ul className="list-disc list-inside pl-5">
-        <li>Check the suggested task.</li>
-        <li>If the match looks correct, proceed as normal.</li>
-        <li>
-          If not, you can manually choose the task that best represents your
-          work.
-        </li>
+        <li>Make sure the app has chosen appropriate tasks</li>
+        <li>Enter the start and end times for each task</li>
+        <li>Submit the time entries</li>
       </ul>
     </div>
   );

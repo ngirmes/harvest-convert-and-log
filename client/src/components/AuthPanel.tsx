@@ -3,7 +3,7 @@ import { CircleCheck } from "lucide-react";
 import type { ApiFunction } from "../pages/Dashboard";
 import Instructions from "./Instructions";
 import Button from "./Button";
-
+import { MoveLeft, MoveRight } from "lucide-react";
 type AuthPanelProps = {
   isAuthenticated: boolean;
   setIsAuthenticated: (value: boolean) => void;
@@ -243,12 +243,17 @@ export default function AuthPanel({
             ref={harvestModalRef}
             className="absolute bottom-full mb-2 bg-orange-50 p-8 rounded-lg shadow-lg border-2 border-black/70 w-72"
           >
-            <a
-              href="https://id.getharvest.com/sessions/new?go_back=%2Fdevelopers"
-              className="justify-center items-center text-blue-600 hover:text-blue-800 underline text-sm mb-2"
-            >
-              Visit Harvest Developers to obain credentials
-            </a>
+            <div className="flex justify-center">
+              <a
+                href="https://id.getharvest.com/sessions/new?go_back=%2Fdevelopers"
+                target="_blank"
+                className="flex items-center gap-2 text-blue-600 hover:text-blue-800 underline text-sm mb-2"
+              >
+                <MoveRight />
+                Obtain Credentials Here
+                <MoveLeft />
+              </a>
+            </div>
             <label htmlFor="token" />
             <input
               id="token"
