@@ -1,6 +1,6 @@
 import type { Log } from "./MainPanel";
-import React, { useState } from "react";
-import { Italic, X } from "lucide-react";
+import { useState } from "react";
+import { X } from "lucide-react";
 
 type MatchesModalProps = {
   logs: Log[];
