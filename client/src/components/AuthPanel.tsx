@@ -105,7 +105,7 @@ export default function AuthPanel({
       setIsAuthenticated(true);
       alert(response.data.message);
     } catch (error) {
-      console.log(error);
+      alert(error);
     }
   }
 
@@ -126,7 +126,8 @@ export default function AuthPanel({
       alert(response.data.message);
     } catch (error) {
       console.error("Registration failed:", error);
-      setMessage("Registration failed. Please try again.");
+      alert(error);
+      //setMessage("Registration failed. Please try again.");
     }
   }
 
@@ -155,7 +156,8 @@ export default function AuthPanel({
       alert(response.data.message);
     } catch (error) {
       console.error("Setting credentials failed:", error);
-      setMessage("Setting credentials failed. Please try again.");
+      //setMessage("Setting credentials failed. Please try again.");
+      alert(error);
     }
   }
 
