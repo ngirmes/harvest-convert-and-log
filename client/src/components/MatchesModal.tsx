@@ -17,8 +17,6 @@ export default function MatchesModal({
 }: MatchesModalProps) {
   const [times, setTimes] = useState(logs.map(() => ({ start: "", end: "" })));
 
-  const [manualHours, setManualHours] = useState<number[]>(logs.map(() => 0));
-
   function updateTime(index: number, field: "start" | "end", value: string) {
     setTimes((prev) =>
       prev.map((t, i) => (i === index ? { ...t, [field]: value } : t)),
@@ -39,7 +37,7 @@ export default function MatchesModal({
 
   const computedHours = logs.map((_, i) => {
     const base = calculateHours(times[i].start, times[i].end);
-    return base + manualHours[i];
+    return base;
   });
 
   const totalHours = computedHours.reduce((a, b) => a + b, 0);

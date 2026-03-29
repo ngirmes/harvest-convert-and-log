@@ -1,5 +1,5 @@
 import { CornerRightDown } from "lucide-react";
-import { useState, useEffect, useTransition, useRef } from "react";
+import { useState } from "react";
 import type { ApiFunction } from "../pages/Dashboard";
 import MatchesModal from "./MatchesModal";
 
@@ -36,9 +36,8 @@ export default function MainPanel({ api }: MainPanelProps) {
   });
   const [logs, setLogs] = useState<Log[]>([]);
   const [textboxInput, setTextboxInput] = useState<string>("");
-  const [, startTransition] = useTransition();
   const [showTasks, setShowTasks] = useState(false);
-  const [bestMatches, setBestMatches] = useState<string[]>([]);
+  //const [bestMatches, setBestMatches] = useState<string[]>([]);
   const [matchesModal, setMatchesModal] = useState(false);
   const [workDescriptions, setWorkDescriptions] = useState<string[]>([]);
 
@@ -46,7 +45,7 @@ export default function MainPanel({ api }: MainPanelProps) {
     setProjects([]);
     setSelectedProject({ id: 0, name: "", tasks: [] });
     setTextboxInput("");
-    setBestMatches([]);
+    //setBestMatches([]);
   }
 
   /*
@@ -116,7 +115,7 @@ export default function MainPanel({ api }: MainPanelProps) {
       });
       if (response.status === 401) reset();
       else {
-        setBestMatches(response.data.matches);
+        //setBestMatches(response.data.matches);
         createLogs(response.data.matches);
       }
     } catch (error) {
