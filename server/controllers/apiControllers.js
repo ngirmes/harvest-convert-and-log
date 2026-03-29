@@ -125,3 +125,29 @@ export async function getHarvestProjects(req, res) {
     .json({ message: "Projects successfully retrieved", projects });
   console.log(projects);
 }
+
+export async function postTimeEntries(req, res) {
+  console.log(`body: ${req.body}`);
+  const { logs } = req.body;
+  console.log(logs);
+  const testLog = logs[0];
+  const response = await fetch("https://api.harvestapp.com/v2/time_entries", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${req.harvest_token}`,
+      "Harvest-Account-Id": req.harvest_id,
+      "User-Agent": `MyApp (${req.harvest_email})`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      project_id: testLog.project_id,
+      task_id: testLog.task_id,
+      spent_date: testLog.spent_date,
+      hours: testLog.hours,
+      notes: testLog.notes,
+    }),
+  });
+  const data = await response.json();
+  res.status(200).json({ data });
+  console.log(data);
+}

@@ -8,6 +8,7 @@ import {
   postHarvestCredentials,
   getHarvestProjects,
   getEmbeddings,
+  postTimeEntries,
 } from "../controllers/apiControllers.js";
 
 import validate from "../validation/validate.js";
@@ -21,6 +22,7 @@ routerAPI.post(
 );
 routerAPI.get("/projects", decryptHarvestCredentials, getHarvestProjects);
 routerAPI.post("/embed", getEmbeddings);
+routerAPI.post("/time-entries", decryptHarvestCredentials, postTimeEntries);
 // routerAPI.get("/harvest-me", authenticateToken, harvestMe);
 
 export default routerAPI;

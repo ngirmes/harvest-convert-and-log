@@ -1,6 +1,7 @@
 import { CornerRightDown } from "lucide-react";
 import { useState, useEffect, useTransition, useRef } from "react";
 import type { ApiFunction } from "../pages/Dashboard";
+import MatchesModal from "./MatchesModal";
 
 type MainPanelProps = {
   api: ApiFunction;
@@ -19,6 +20,7 @@ type Project = {
 
 export type Log = {
   project_id: number;
+  task_name: string;
   task_id: number | undefined;
   spent_date: string;
   hours: number;
@@ -78,29 +80,23 @@ export default function MainPanel({ api }: MainPanelProps) {
       });
     }
   }, [isAuthenticated]);*/
-  function createLogs() {
-    const date = new Date().toISOString().slice(0, 10);
+  function createLogs(matches: string[]) {
+    const date = new Date().toLocaleDateString("en-CA");
 
-    for (let i = 0; i < workDescriptions.length; i++) {
-      setLogs((prev) => [
-        ...prev,
-        {
-          project_id: selectedProject.id,
-          task_id: selectedProject.tasks.find((t) => t.name === bestMatches[i])
-            ?.id,
-          spent_date: date,
-          hours: 0,
-          notes: workDescriptions[i],
-        },
-      ]);
-    }
-    console.log(`${JSON.stringify(logs)}`);
+    const newLogs = workDescriptions.map((desc, i) => ({
+      project_id: selectedProject.id,
+      task_name: matches[i],
+      task_id: selectedProject.tasks.find((t) => t.name === matches[i])?.id,
+      spent_date: date,
+      hours: 0,
+      notes: desc,
+    }));
+    setLogs(newLogs);
   }
 
   async function runMatcher() {
     try {
       const token = localStorage.getItem("token");
-      setWorkDescriptions(textboxInput.split(","));
       const taskNames = selectedProject.tasks.map((t) => t.name);
 
       const response = await api<{
@@ -121,7 +117,7 @@ export default function MainPanel({ api }: MainPanelProps) {
       if (response.status === 401) reset();
       else {
         setBestMatches(response.data.matches);
-        createLogs();
+        createLogs(response.data.matches);
       }
     } catch (error) {
       console.error("Finding matches failed: ", error);
@@ -152,16 +148,43 @@ export default function MainPanel({ api }: MainPanelProps) {
     }
   }
 
+  async function submitLogs(logs: Log[]) {
+    console.log(`hi ${JSON.stringify(logs)}, ${typeof logs}`);
+    try {
+      const token = localStorage.getItem("token");
+      const response = await api<{ status: number | null; message: string }>(
+        `/api/time-entries`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            logs,
+          }),
+        },
+      );
+
+      if (response.status === 401) {
+        reset();
+        alert(response.data.message);
+      }
+    } catch (error) {
+      console.error("Getting projects failed: ", error);
+    }
+  }
+
   return (
     <>
-      {/*
       {matchesModal && (
         <MatchesModal
           logs={logs}
           projectName={selectedProject.name}
-          bestMatches={bestMatches}
+          setMatchesModal={setMatchesModal}
+          submitLogs={submitLogs}
         />
-      )}*/}
+      )}
       <div className="flex flex-col col-span-2 space-y-6 overflow-y-auto">
         {/* Project Selection Section */}
         <div className="space-y-2">
@@ -243,7 +266,10 @@ export default function MainPanel({ api }: MainPanelProps) {
               id="taskdescription"
               placeholder="Enter tasks separated by commas..."
               value={textboxInput}
-              onChange={(e) => setTextboxInput(e.target.value)}
+              onChange={(e) => {
+                setTextboxInput(e.target.value);
+                setWorkDescriptions(textboxInput.split(","));
+              }}
               className="w-full p-2 border-2 border-black/70 rounded-lg h-24 resize-none"
             />
 
@@ -254,8 +280,13 @@ export default function MainPanel({ api }: MainPanelProps) {
               >
                 Run Matcher
               </button>
-
-              <h1>Best matches: {bestMatches}</h1>
+              <button
+                onClick={() => setMatchesModal(true)}
+                disabled={logs.length === 0}
+                className="rounded-lg border-2 border-black/70 bg-orange-300 px-6 py-3 text-lg font-bold text-black/70 hover:bg-orange-400 disabled:text-gray-400 disabled:border-gray-400 disabled:bg-orange-50"
+              >
+                See Logs
+              </button>
             </div>
           </div>
         )}
