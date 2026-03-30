@@ -17,7 +17,10 @@ db.serialize(() => {
         (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             email TEXT NOT NULL,
-            password TEXT NOT NULL
+            password TEXT NOT NULL,
+            harvest_token TEXT NOT NULL,
+            harvest_id TEXT NOT NULL,
+            harvest_email TEXT NOT NULL
         )
     `);
   db.run(`
