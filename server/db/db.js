@@ -20,4 +20,11 @@ db.serialize(() => {
             password TEXT NOT NULL
         )
     `);
+  db.run(`
+    CREATE TABLE idempotencies (
+      user_id TEXT,
+      submission_id TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      PRIMARY KEY (user_id, submission_id)
+      )`);
 });

@@ -7,6 +7,8 @@ type MatchesModalProps = {
   projectName: string;
   setMatchesModal: (value: boolean) => void;
   submitLogs: (value: Log[]) => void;
+  submitting: boolean;
+  setSubmitting: (value: boolean) => void;
 };
 
 export default function MatchesModal({
@@ -14,6 +16,8 @@ export default function MatchesModal({
   projectName,
   setMatchesModal,
   submitLogs,
+  submitting,
+  setSubmitting,
 }: MatchesModalProps) {
   const [times, setTimes] = useState(logs.map(() => ({ start: "", end: "" })));
   const [newLogs, setNewLogs] = useState<Log[]>(logs);
@@ -44,6 +48,7 @@ export default function MatchesModal({
   const totalHours = computedHours.reduce((a, b) => a + b, 0);
 
   function submit() {
+    setSubmitting(true);
     const logsWithHours = newLogs.map((log, i) => ({
       ...log,
       hours: computedHours[i],
@@ -127,6 +132,7 @@ export default function MatchesModal({
           </div>
 
           <button
+            disabled={submitting}
             onClick={submit}
             className="bg-orange-300 hover:bg-orange-400 font-bold px-6 py-2 rounded-lg"
           >

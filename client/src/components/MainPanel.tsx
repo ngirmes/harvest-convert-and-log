@@ -1,5 +1,5 @@
 import { CornerRightDown } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import type { ApiFunction } from "../pages/Dashboard";
 import MatchesModal from "./MatchesModal";
 
@@ -40,6 +40,8 @@ export default function MainPanel({ api }: MainPanelProps) {
   //const [bestMatches, setBestMatches] = useState<string[]>([]);
   const [matchesModal, setMatchesModal] = useState(false);
   const [workDescriptions, setWorkDescriptions] = useState<string[]>([]);
+  const [submitting, setSubmitting] = useState(false);
+  const submissionIdRef = useRef<string | null>(null);
 
   function reset() {
     setProjects([]);
@@ -148,6 +150,9 @@ export default function MainPanel({ api }: MainPanelProps) {
 
   async function submitLogs(logs: Log[]) {
     try {
+      if (!submissionIdRef.current)
+        submissionIdRef.current = crypto.randomUUID();
+
       const token = localStorage.getItem("token");
       const response = await api<{ status: number | null; message: string }>(
         `/api/time-entries`,
@@ -158,10 +163,15 @@ export default function MainPanel({ api }: MainPanelProps) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            submissionIdRef,
             logs,
           }),
         },
       );
+      setMatchesModal(false);
+      setSubmitting(false);
+      setLogs([]);
+      submissionIdRef.current = null;
       alert("Entries successfully submitted");
       if (response.status === 401) {
         reset();
@@ -180,6 +190,8 @@ export default function MainPanel({ api }: MainPanelProps) {
           projectName={selectedProject.name}
           setMatchesModal={setMatchesModal}
           submitLogs={submitLogs}
+          submitting={submitting}
+          setSubmitting={setSubmitting}
         />
       )}
       <div className="flex flex-col col-span-2 space-y-6 overflow-y-auto">
