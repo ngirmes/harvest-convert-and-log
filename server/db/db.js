@@ -21,8 +21,8 @@ db.serialize(() => {
         )
     `);
   db.run(`
-    CREATE TABLE idempotencies (
-      user_id TEXT,
+    CREATE TABLE IF NOT EXISTS idempotencies (
+      user_id INTEGER,
       submission_id TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (user_id, submission_id)

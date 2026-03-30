@@ -3,6 +3,7 @@ const routerAPI = express.Router();
 
 import encryptHarvestCredentials from "../middleware/encryptHarvestCredentials.js";
 import decryptHarvestCredentials from "../middleware/decryptHarvestCredentials.js";
+import checkIdempotency from "../middleware/checkIdempoteny.js";
 
 import {
   postHarvestCredentials,
@@ -22,7 +23,12 @@ routerAPI.post(
 );
 routerAPI.get("/projects", decryptHarvestCredentials, getHarvestProjects);
 routerAPI.post("/embed", getEmbeddings);
-routerAPI.post("/time-entries", decryptHarvestCredentials, postTimeEntries);
+routerAPI.post(
+  "/time-entries",
+  checkIdempotency,
+  decryptHarvestCredentials,
+  postTimeEntries,
+);
 // routerAPI.get("/harvest-me", authenticateToken, harvestMe);
 
 export default routerAPI;

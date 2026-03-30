@@ -126,7 +126,7 @@ export async function getHarvestProjects(req, res) {
 export async function postTimeEntries(req, res) {
   console.log(`body: ${JSON.stringify(req.body)}`);
   const { logs } = req.body;
-
+  /*
   const responses = await Promise.all(
     logs.map((log) =>
       fetch("https://api.harvestapp.com/v2/time_entries", {
@@ -164,4 +164,5 @@ export async function postTimeEntries(req, res) {
   });
 
   console.log(data);
+  */
 }
